@@ -1,7 +1,18 @@
 <script>
+function toggleMobileSidebar() {
+  document.querySelector('.sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('show');
+}
 function toggleSidebar() {
+  if (window.innerWidth < 768) { toggleMobileSidebar(); return; }
   document.querySelector('.sidebar').classList.toggle('small-sidebar');
 }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var s = document.querySelector('.sidebar');
+    if (s && s.classList.contains('open')) toggleMobileSidebar();
+  }
+});
 </script>
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/sidebars.js"></script>

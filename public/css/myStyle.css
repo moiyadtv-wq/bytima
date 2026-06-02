@@ -75,17 +75,40 @@
   border-radius: 12px;
 }
 
-/* Mobile: keep same layout as desktop, just smaller sidebar */
+/* Mobile offcanvas sidebar */
 @media (max-width: 767.98px) {
-  .sidebar { width: 200px; }
-  .sidebar .sidebar-text,
-  .sidebar .fs-4 { font-size: 0.9rem; }
-  .sidebar .nav-link { font-size: 0.85rem; padding: 0.3rem 0.5rem; }
-  .small-sidebar { width: 60px; }
-  .flex-grow-1.p-4 { padding: 0.75rem !important; overflow-x: auto; }
-  main.d-flex { min-width: 0; }
+  .sidebar {
+    position: fixed !important;
+    top: 0; left: -280px;
+    width: 280px !important;
+    height: 100vh !important;
+    z-index: 1060;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+    box-shadow: none;
+    border-right: 1px solid var(--bs-border-color) !important;
+  }
+  .sidebar.open { left: 0; box-shadow: 4px 0 30px rgba(0,0,0,0.2); }
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1055;
+  }
+  .sidebar-backdrop.show { display: block; }
+  .b-example-vr { display: none !important; }
+  .flex-grow-1.p-4 { padding: 0.75rem !important; width: 100% !important; overflow-x: auto; }
+  main.d-flex { flex-direction: column !important; }
+  /* Cards stack in single column */
+  .row.g-4 > [class*="col-"] { width: 100% !important; }
+  /* Tables scroll horizontally */
+  .table-responsive-custom { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table { font-size: 0.85rem; }
+  /* Better touch targets */
+  .btn { padding: 0.5rem 1rem; }
+  .nav-link { padding: 0.5rem 0.75rem; }
 }
-/* Mobile menu button - hidden on desktop */
 .mobile-menu-btn { display: none; }
 @media (max-width: 767.98px) {
   .mobile-menu-btn { display: inline-flex !important; }
