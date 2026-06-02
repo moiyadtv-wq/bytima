@@ -111,7 +111,7 @@ const upload = require("./middleware/upload");
 // Shop - public e-commerce routes (must be before auth-required routes)
 app.use("/shop", require("./routes/shopRoutes"));
 
-app.use("/", authLimiter, require("./routes/authRoutes"));
+app.use("/", require("./routes/authRoutes"));
 app.use("/api", apiLimiter, require("./routes/apiRoutes"));
 
 // Homepage: landing page for guests, dashboard for logged-in
