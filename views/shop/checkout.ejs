@@ -1,0 +1,98 @@
+<%- include('../partials/header') %>
+<main class="d-flex flex-nowrap">
+  <%- include('../partials/sidebar', { currentPage: 'shop' }) %>
+  <div class="b-example-divider b-example-vr"></div>
+
+  <section class="w-100 p-4">
+    <%- include('../partials/navbar') %>
+
+    <h4 class="mt-3 mb-3"><i class="bi bi-truck me-2"></i><%= __('checkout') %></h4>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-danger"><%= __(error) %></div>
+    <% } %>
+
+    <div class="row g-4">
+      <div class="col-md-7">
+        <div class="card shadow-sm">
+          <div class="card-body">
+              <h5><%= __('shipping_details') %></h5>
+              <form action="/shop/checkout" method="POST">
+                <div class="mb-3">
+                  <label class="form-label"><%= __('full_name') %> *</label>
+                  <input type="text" class="form-control" name="customerName" placeholder="<%= __('full_name') %>" value="<%= customer ? customer.name : '' %>" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><%= __('phone_number') %> *</label>
+                  <input type="tel" class="form-control" name="customerPhone" placeholder="<%= __('phone_number') %>" value="<%= customer ? customer.phone : '' %>" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><%= __('country') %> *</label>
+                  <input type="text" class="form-control" name="customerCountry" value="<%= customer ? customer.country : '' %>" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><%= __('governorate') %> *</label>
+                  <input type="text" class="form-control" name="customerGovernorate" value="<%= customer ? customer.governorate : '' %>" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><%= __('region') %> *</label>
+                  <input type="text" class="form-control" name="customerRegion" value="<%= customer ? customer.region : '' %>" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><%= __('detailed_address') %> *</label>
+                  <textarea class="form-control" name="customerAddress" rows="2" required><%= customer ? customer.detailedAddress : '' %></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><%= __('notes') %></label>
+                  <textarea class="form-control" name="notes" rows="2" placeholder="<%= __('notes') %>"></textarea>
+                </div>
+
+              <h5 class="mt-4"><%= __('payment_method') %></h5>
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <button type="submit" name="paymentMethod" value="cash" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3 border-2" id="btn-cash">
+                    <i class="bi bi-cash fs-1 mb-1"></i>
+                    <strong><%= __('cash_on_delivery') %></strong>
+                    <small class="text-muted"><%= __('pay_when_receive') %></small>
+                  </button>
+                </div>
+                <div class="col-6">
+                  <button type="submit" name="paymentMethod" value="sham-cash" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-3 border-2" id="btn-sham">
+                    <i class="bi bi-credit-card fs-1 mb-1"></i>
+                    <strong><%= __('sham_cash') %></strong>
+                    <small class="text-muted"><%= __('transfer_via_sham_cash') %></small>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5><%= __('order_summary') %></h5>
+            <table class="table table-sm">
+              <% cart.forEach(item => { %>
+                <tr>
+                  <td><%= item.name %> <small>x<%= item.quantity %></small></td>
+                  <td class="text-end"><%= __('currency') %><%= (item.price * item.quantity).toFixed(2) %></td>
+                </tr>
+              <% }) %>
+            </table>
+            <hr>
+            <h5 class="d-flex justify-content-between">
+              <span><%= __('total') %>:</span>
+              <strong><%= __('currency') %><%= subtotal.toFixed(2) %></strong>
+            </h5>
+            <p class="text-muted small mb-0"><%= __('payment_on_delivery') %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('../partials/scripts') %>
+</body>
+</html>

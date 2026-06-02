@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>" dir="<%= dir %>" data-bs-theme="auto">
+<head>
+  <script src="/js/color-modes.js"></script>
+  <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= typeof title !== 'undefined' ? title : 'by tima' %></title>
+  <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/dark-light.css" />
+  <link href="/css/sidebars.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/myStyle.css" />
+  <style>
+    :root { --bs-primary: #7c2dff; --bs-primary-rgb: 124, 45, 255; }
+    .btn-primary { --bs-btn-bg: #7c2dff; --bs-btn-border-color: #7c2dff; --bs-btn-hover-bg: #6a1fd6; --bs-btn-hover-border-color: #6a1fd6; --bs-btn-active-bg: #5a1ab5; }
+    .btn-outline-primary { --bs-btn-color: #7c2dff; --bs-btn-border-color: #7c2dff; --bs-btn-hover-bg: #7c2dff; --bs-btn-hover-border-color: #7c2dff; --bs-btn-active-bg: #6a1fd6; }
+    .text-primary { color: #7c2dff !important; }
+    .bg-primary { background-color: #7c2dff !important; }
+    .border-primary { border-color: #7c2dff !important; }
+    .link-primary { color: #7c2dff !important; }
+    .nav-pills .nav-link.active { background-color: #7c2dff !important; }
+    .form-control:focus { border-color: #b366ff; box-shadow: 0 0 0 0.2rem rgba(124, 45, 255, 0.25); }
+    .page-item.active .page-link { background-color: #7c2dff; border-color: #7c2dff; }
+    .progress-bar { background-color: #7c2dff; }
+    .dropdown-item:active { background-color: #7c2dff; }
+    <% if (dir === 'rtl') { %>
+    .sidebar { text-align: right; }
+    .sidebar .nav-link i, .sidebar .nav-link svg { margin-left: 0.5rem; margin-right: 0; }
+    .dropdown-menu.text-small { text-align: right; }
+    .b-example-vr { border-left: none; border-right: 1px solid var(--bs-border-color); }
+    .input-icon-wrap .icon { left: auto; right: 0.9rem; }
+    .input-icon-wrap .form-control { padding-left: 1rem; padding-right: 2.5rem; }
+    .position-absolute.top-0.start-100 { left: auto !important; right: 100% !important; }
+    .me-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+    .ms-auto { margin-left: 0 !important; margin-right: auto !important; }
+    .ms-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+    .me-auto { margin-right: 0 !important; margin-left: auto !important; }
+    .text-end { text-align: left !important; }
+    .text-start { text-align: right !important; }
+    .dropdown-menu.text-start { text-align: right !important; }
+    .input-group:not(.has-validation) > :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu):not(.form-floating) { border-radius: 0 var(--bs-border-radius) var(--bs-border-radius) 0; }
+    .input-group:not(.has-validation) > .dropdown-toggle:nth-last-child(n+3), .input-group:not(.has-validation) > .form-floating:not(:last-child) > .form-control, .input-group:not(.has-validation) > .form-floating:not(:last-child) > .form-select { border-radius: 0 var(--bs-border-radius) var(--bs-border-radius) 0; }
+    .input-group > :first-child { border-radius: var(--bs-border-radius) 0 0 var(--bs-border-radius) !important; }
+    <% } %>
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+    <symbol id="home" viewBox="0 0 16 16"><path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/></symbol>
+    <symbol id="people-circle" viewBox="0 0 16 16"><path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/></symbol>
+    <symbol id="sun-fill" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/></symbol>
+    <symbol id="moon-stars-fill" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/><path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/></symbol>
+  </svg>

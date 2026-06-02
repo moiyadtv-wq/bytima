@@ -1,0 +1,173 @@
+<%- include('../partials/header') %>
+<main class="d-flex flex-nowrap">
+  <%- include('../partials/sidebar', { currentPage: 'admin-orders' }) %>
+  <div class="b-example-divider b-example-vr"></div>
+
+  <section class="w-100 p-4">
+    <%- include('../partials/navbar') %>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success alert-dismissible fade show"><%= __(success) %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <% } %>
+
+    <!-- Search & Filter Bar -->
+    <div class="card shadow mt-3">
+      <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h5 class="mb-0"><i class="bi bi-truck me-2"></i><%= __('orders') %></h5>
+        <span class="badge bg-primary fs-6"><%= orders.length %></span>
+      </div>
+      <div class="card-body">
+        <form class="row g-2" method="GET">
+          <div class="col-md-5">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control" name="q" placeholder="<%= __('search') %> (<%= __('name') %>/<%= __('phone') %>/#)" value="<%= q %>">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <select class="form-select form-select-sm" name="status">
+              <option value="all" <%= statusFilter === 'all' ? 'selected' : '' %>><%= __('all') %></option>
+              <option value="pending" <%= statusFilter === 'pending' ? 'selected' : '' %>><%= __('pending') %></option>
+              <option value="confirmed" <%= statusFilter === 'confirmed' ? 'selected' : '' %>><%= __('confirmed') %></option>
+              <option value="processing" <%= statusFilter === 'processing' ? 'selected' : '' %>><%= __('processing') %></option>
+              <option value="shipped" <%= statusFilter === 'shipped' ? 'selected' : '' %>><%= __('shipped') %></option>
+              <option value="delivered" <%= statusFilter === 'delivered' ? 'selected' : '' %>><%= __('delivered') %></option>
+              <option value="cancelled" <%= statusFilter === 'cancelled' ? 'selected' : '' %>><%= __('cancelled') %></option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100"><i class="bi bi-funnel"></i> <%= __('filter') %></button>
+          </div>
+          <div class="col-md-2">
+            <a href="/admin/orders" class="btn btn-sm btn-outline-secondary w-100"><i class="bi bi-x-circle"></i> <%= __('clear') %></a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Orders List -->
+    <% if (orders.length === 0) { %>
+      <div class="text-center py-5 text-muted"><h5><i class="bi bi-inbox"></i> <%= __('no_orders') %></h5></div>
+    <% } else { %>
+      <% orders.forEach(order => { %>
+        <div class="card shadow mt-3">
+          <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+              <strong class="text-primary">#<%= order.orderNumber || order._id.toString().slice(-6) %></strong>
+              <span class="badge bg-<%= order.status === 'pending' ? 'warning' : order.status === 'confirmed' ? 'info' : order.status === 'processing' ? 'secondary' : order.status === 'shipped' ? 'primary' : order.status === 'delivered' ? 'success' : 'danger' %> ms-2">
+                <%= __(order.status) %>
+              </span>
+            </div>
+            <small class="text-muted"><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-' %></small>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <!-- Customer Info -->
+              <div class="col-md-4">
+                <div class="p-3 bg-light rounded">
+                  <h6 class="mb-2"><i class="bi bi-person-circle me-1"></i> <%= __('customer') %></h6>
+                  <p class="mb-1"><strong><%= order.customerName %></strong></p>
+                  <p class="mb-1">
+                    <a href="javascript:void(0)" class="text-decoration-none wa-btn" data-phone="<%= order.customerPhone %>" data-name="<%= order.customerName %>" data-id="<%= order.orderNumber || order._id %>" data-status="<%= order.status %>">
+                      <i class="bi bi-whatsapp text-success"></i> <%= order.customerPhone %>
+                    </a>
+                  </p>
+                  <% if (order.customerAddress) { %><p class="mb-0 text-muted small"><i class="bi bi-geo-alt"></i> <%= order.customerAddress %></p><% } %>
+                </div>
+              </div>
+              <!-- Order Items -->
+              <div class="col-md-5">
+                <div class="p-3 bg-light rounded">
+                  <h6 class="mb-2"><i class="bi bi-box me-1"></i> <%= __('items') %></h6>
+                  <% order.items.forEach(item => { %>
+                    <div class="d-flex justify-content-between small mb-1">
+                      <span><%= item.name %> <span class="text-muted">x<%= item.quantity %></span></span>
+                      <span><%= __('currency') %><%= (item.price * item.quantity).toFixed(2) %></span>
+                    </div>
+                  <% }) %>
+                  <hr class="my-1">
+                  <div class="d-flex justify-content-between fw-bold">
+                    <span><%= __('total') %></span>
+                    <span><%= __('currency') %><%= order.total.toFixed(2) %></span>
+                  </div>
+                  <div class="mt-1">
+                    <span class="badge bg-<%= order.paymentMethod === 'cash' ? 'secondary' : 'info' %>">
+                      <i class="bi bi-<%= order.paymentMethod === 'cash' ? 'cash' : 'bank' %>"></i> <%= order.paymentMethod === 'cash' ? __('cash_on_delivery') : __('sham_cash') %>
+                    </span>
+                    <% if (order.isReturning) { %>
+                      <span class="badge bg-warning"><i class="bi bi-arrow-return-left"></i> <%= __('returning_customer') %></span>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+              <!-- Actions -->
+              <div class="col-md-3">
+                <div class="p-3 bg-light rounded">
+                  <h6 class="mb-2"><i class="bi bi-gear me-1"></i> <%= __('actions') %></h6>
+                  <form action="/admin/orders/<%= order._id %>/status" method="POST">
+                    <select class="form-select form-select-sm mb-2" name="status">
+                      <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>><%= __('pending') %></option>
+                      <option value="confirmed" <%= order.status === 'confirmed' ? 'selected' : '' %>><%= __('confirmed') %></option>
+                      <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>><%= __('processing') %></option>
+                      <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>><%= __('shipped') %></option>
+                      <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>><%= __('delivered') %></option>
+                      <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>><%= __('cancelled') %></option>
+                    </select>
+                    <div class="d-flex gap-1">
+                      <button type="submit" class="btn btn-sm btn-primary flex-fill"><i class="bi bi-check-lg"></i> <%= __('update') %></button>
+                      <button type="button" class="btn btn-sm btn-success flex-fill wa-btn" data-phone="<%= order.customerPhone %>" data-name="<%= order.customerName %>" data-id="<%= order.orderNumber || order._id %>" data-status="<%= order.status %>">
+                        <i class="bi bi-whatsapp"></i>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <% if (order.notes) { %>
+              <div class="mt-2 p-2 bg-info bg-opacity-10 rounded">
+                <small class="text-info"><i class="bi bi-chat-dots me-1"></i> <%= __('notes') %>: <%= order.notes %></small>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </section>
+</main>
+
+<%- include('../partials/scripts') %>
+<script>
+  function formatPhone(phone) {
+    let p = phone.replace(/[^\d]/g, '');
+    if (p.startsWith('00')) p = p.slice(2);
+    if (p.startsWith('0')) p = '963' + p.slice(1);
+    if (!p.startsWith('963')) p = '963' + p;
+    return p;
+  }
+
+  const statusMessages = {
+    pending: "<%= __('wa_status_pending') %>",
+    confirmed: "<%= __('wa_status_confirmed') %>",
+    shipped: "<%= __('wa_status_shipped') %>",
+    delivered: "<%= __('wa_status_delivered') %>",
+    cancelled: "<%= __('wa_status_cancelled') %>"
+  };
+
+  document.querySelectorAll('.wa-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const phone = formatPhone(this.dataset.phone);
+      const name = this.dataset.name;
+      const orderId = this.dataset.id;
+      const form = this.closest('form');
+      const select = form ? form.querySelector('select[name="status"]') : null;
+      const currentStatus = select ? select.value : this.dataset.status;
+      const msg = (statusMessages[currentStatus] || statusMessages.pending)
+        .replace('{name}', name)
+        .replace('{id}', orderId);
+      window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+    });
+  });
+</script>
+</body>
+</html>

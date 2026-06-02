@@ -1,0 +1,89 @@
+<%- include('../partials/header') %>
+<main class="d-flex flex-nowrap">
+  <%- include('../partials/sidebar', { currentPage: 'admin-customers' }) %>
+  <div class="b-example-divider b-example-vr"></div>
+
+  <section class="w-100 p-4">
+    <%- include('../partials/navbar') %>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success alert-dismissible fade show"><%= success %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger alert-dismissible fade show"><%= __(error) %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <% } %>
+
+    <div class="mt-3 mb-3">
+      <h4 class="mb-3 text-center"><i class="bi bi-people me-2"></i><%= __('customer_management') %></h4>
+      <div class="d-flex justify-content-center">
+        <form class="d-flex gap-2" method="GET" style="max-width:400px;width:100%">
+          <input type="text" class="form-control form-control-sm" name="q" placeholder="<%= __('search') %>" value="<%= search || '' %>">
+          <button class="btn btn-sm btn-outline-primary"><i class="bi bi-search"></i></button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card shadow">
+      <div class="card-body p-0">
+        <table class="table table-striped table-hover mb-0 align-middle">
+          <thead><tr>
+            <th>#</th>
+            <th><%= __('image') %></th>
+            <th><%= __('full_name') %></th>
+            <th><%= __('email') %></th>
+            <th><%= __('phone') %></th>
+            <th><%= __('country') %></th>
+            <th><%= __('orders') %></th>
+            <th><%= __('status') %></th>
+            <th><%= __('action') %></th>
+          </tr></thead>
+          <tbody>
+            <% if (customers.length === 0) { %>
+              <tr><td colspan="9" class="text-center py-4 text-muted"><%= __('no_customers_yet') %></td></tr>
+            <% } else { %>
+              <% customers.forEach((c, i) => { %>
+                <tr>
+                  <th><%= i + 1 %></th>
+                  <td>
+                    <% if (c.image) { %>
+                      <img src="<%= c.image %>" class="img-thumb" alt="<%= c.name %>" style="width:40px;height:40px;object-fit:cover;border-radius:50%">
+                    <% } else { %>
+                      <span class="text-muted">—</span>
+                    <% } %>
+                  </td>
+                  <td><a href="/admin/customers/<%= c._id %>" class="text-decoration-none"><%= c.name || (c.firstName + ' ' + c.lastName) %></a></td>
+                  <td><%= c.email || '-' %></td>
+                  <td><%= c.phone || c.phoneNumber || '-' %></td>
+                  <td><%= c.country || '-' %></td>
+                  <td><span class="badge bg-info"><%= c.orderCount || 0 %></span></td>
+                  <td>
+                    <span class="badge bg-<%= c.status === 'active' || !c.status ? 'success' : 'secondary' %>"><%= __(c.status || 'active') %></span>
+                  </td>
+                  <td>
+                    <div class="d-flex gap-1">
+                      <a href="/admin/customers/<%= c._id %>" class="btn btn-sm btn-primary" title="<%= __('view') %>"><i class="bi bi-eye"></i></a>
+                      <% if (user.role === 'admin') { %>
+                      <a href="/admin/customers/<%= c._id %>/edit" class="btn btn-sm btn-warning" title="<%= __('edit') %>"><i class="bi bi-pencil"></i></a>
+                      <form action="/admin/customers/<%= c._id %>/toggle-status" method="POST" style="display:inline">
+                        <button class="btn btn-sm btn-<%= c.status === 'blocked' ? 'success' : 'secondary' %>" title="<%= c.status === 'blocked' ? __('activate') : __('deactivate') %>">
+                          <i class="bi bi-<%= c.status === 'blocked' ? 'check-circle' : 'pause-circle' %>"></i>
+                        </button>
+                      </form>
+                      <button class="btn btn-sm btn-danger" title="<%= __('delete') %>" onclick="showConfirm('<%= __('confirm_delete') %>', function() { document.getElementById('deleteCustomer<%= c._id %>').submit(); })"><i class="bi bi-trash"></i></button>
+                      <form id="deleteCustomer<%= c._id %>" action="/admin/customers/<%= c._id %>/delete" method="POST" style="display:none"></form>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('../partials/scripts') %>
+</body>
+</html>

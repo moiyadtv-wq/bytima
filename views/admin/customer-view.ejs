@@ -1,0 +1,87 @@
+<%- include('../partials/header') %>
+<main class="d-flex flex-nowrap">
+  <%- include('../partials/sidebar', { currentPage: 'admin-customers' }) %>
+  <div class="b-example-divider b-example-vr"></div>
+
+  <section class="w-100 p-4">
+    <%- include('../partials/navbar') %>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+      <h4 class="mb-0"><i class="bi bi-person me-2"></i><%= __('customer_details') %></h4>
+      <div>
+        <a href="/admin/customers/<%= customer._id %>/edit" class="btn btn-warning"><i class="bi bi-pencil"></i> <%= __('edit') %></a>
+        <a href="/admin/customers" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> <%= __('back') %></a>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm text-center">
+          <div class="card-body">
+            <% if (customer.image) { %>
+              <img src="<%= customer.image %>" class="rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover">
+            <% } else { %>
+              <i class="bi bi-person-circle text-muted" style="font-size:5rem;"></i>
+            <% } %>
+            <h5><%= customer.name || (customer.firstName + ' ' + customer.lastName) %></h5>
+            <span class="badge bg-<%= customer.status === 'active' || !customer.status ? 'success' : 'secondary' %> fs-6"><%= __(customer.status || 'active') %></span>
+          </div>
+        </div>
+        <div class="card shadow-sm mt-3">
+          <div class="card-body">
+            <h6><%= __('order_stats') %></h6>
+            <p class="mb-1"><%= __('total_orders') %>: <strong><%= customer.orderCount || customer.totalOrders || 0 %></strong></p>
+            <p class="mb-0"><%= __('total_spent') %>: <strong><%= __('currency') %><%= (customer.totalSpent || 0).toFixed(2) %></strong></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5><%= __('personal_info') %></h5>
+            <table class="table table-sm table-borderless">
+              <tr><th style="width:180px"><%= __('full_name') %>:</th><td><%= customer.name || (customer.firstName + ' ' + customer.lastName) || '-' %></td></tr>
+              <tr><th><%= __('email') %>:</th><td><%= customer.email || '-' %></td></tr>
+              <tr><th><%= __('phone') %>:</th><td><%= customer.phone || customer.phoneNumber || '-' %></td></tr>
+              <tr><th><%= __('country') %>:</th><td><%= customer.country || '-' %></td></tr>
+              <tr><th><%= __('governorate') %>:</th><td><%= customer.governorate || '-' %></td></tr>
+              <tr><th><%= __('region') %>:</th><td><%= customer.region || '-' %></td></tr>
+              <tr><th><%= __('detailed_address') %>:</th><td><%= customer.detailedAddress || customer.address || '-' %></td></tr>
+              <tr><th><%= __('registered') %>:</th><td><%= customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : '-' %></td></tr>
+              <tr><th><%= __('last_login') %>:</th><td><%= customer.lastLogin ? new Date(customer.lastLogin).toLocaleDateString() : '-' %></td></tr>
+              <tr><th><%= __('notes') %>:</th><td><%= customer.notes || '-' %></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="card shadow-sm mt-3">
+          <div class="card-body">
+            <h5><%= __('recent_orders') %></h5>
+            <% if (orders.length === 0) { %>
+              <p class="text-muted mb-0"><%= __('no_orders') %></p>
+            <% } else { %>
+              <table class="table table-sm">
+                <thead><tr><th>#</th><th><%= __('order') %></th><th><%= __('total') %></th><th><%= __('status') %></th><th><%= __('date') %></th></tr></thead>
+                <tbody>
+                  <% orders.forEach((o, i) => { %>
+                  <tr>
+                    <td><%= i + 1 %></td>
+                    <td><a href="/shop/orders/<%= o._id %>"><%= o.orderNumber || o._id.toString().slice(-6) %></a></td>
+                    <td><%= __('currency') %><%= o.total.toFixed(2) %></td>
+                    <td><span class="badge bg-<%= o.status === 'pending' ? 'warning' : o.status === 'confirmed' ? 'info' : o.status === 'processing' ? 'secondary' : o.status === 'shipped' ? 'primary' : o.status === 'delivered' ? 'success' : 'danger' %>"><%= __(o.status) %></span></td>
+                    <td><%= new Date(o.createdAt).toLocaleDateString() %></td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('../partials/scripts') %>
+</body>
+</html>

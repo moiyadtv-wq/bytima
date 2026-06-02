@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>" dir="<%= dir %>">
+<head>
+  <script src="/js/color-modes.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= __('website_name') %> - <%= __('login') %></title>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/bootstrap-icons-1.10.5/font/bootstrap-icons.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a0033 0%, #4a0080 30%, #7c2dff 60%, #b366ff 100%);
+      position: relative;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      padding: 1rem;
+    }
+    body::before {
+      content: '<%= __('website_name') %>';
+      position: absolute;
+      font-size: clamp(8rem, 20vw, 20rem);
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.04);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      white-space: nowrap;
+      user-select: none;
+      letter-spacing: 0.1em;
+    }
+    .watermark-decor {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      pointer-events: none;
+    }
+    .watermark-decor:nth-child(1) { width: 600px; height: 600px; top: -200px; right: -200px; }
+    .watermark-decor:nth-child(2) { width: 400px; height: 400px; bottom: -100px; left: -150px; }
+    .watermark-decor:nth-child(3) { width: 200px; height: 200px; top: 30%; left: 10%; }
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .login-card .brand {
+      color: #fff;
+      font-size: 1.8rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .login-card .brand i { color: #b366ff; }
+    .tab-btns {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: 14px;
+      padding: 0.35rem;
+    }
+    .tab-btns .tab-btn {
+      flex: 1;
+      padding: 0.6rem 0.5rem;
+      border-radius: 11px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      font-weight: 500;
+      font-size: 0.85rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btns .tab-btn.active {
+      background: rgba(124,45,255,0.35);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .tab-btns .tab-btn:hover:not(.active) {
+      color: rgba(255,255,255,0.8);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .login-card .form-label {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    .login-card .form-control {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #fff;
+      padding: 0.7rem 1rem;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .login-card .form-control:focus {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: #b366ff;
+      box-shadow: 0 0 0 3px rgba(179, 102, 255, 0.25);
+      color: #fff;
+    }
+    .login-card .form-control::placeholder { color: rgba(255, 255, 255, 0.3); font-size: 0.85rem; }
+    .login-card select.form-control option { color: #000; background: #fff; }
+    .login-card .form-control:-webkit-autofill,
+    .login-card .form-control:-webkit-autofill:focus {
+      -webkit-text-fill-color: #fff;
+      -webkit-box-shadow: 0 0 0 1000px rgba(74, 0, 128, 0.5) inset;
+    }
+    .login-card .btn-primary-custom {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #7c2dff, #b366ff);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .login-card .btn-primary-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(124, 45, 255, 0.4);
+    }
+    .login-card .btn-primary-custom:active { transform: translateY(0); }
+    .alert-custom {
+      border-radius: 12px;
+      padding: 0.6rem 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      border: none;
+    }
+    .alert-custom.alert-success { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    .alert-custom.alert-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .input-icon-wrap { position: relative; }
+    .input-icon-wrap .form-control { padding-<%= dir === 'rtl' ? 'right' : 'left' %>: 2.5rem; }
+    .input-icon-wrap .icon {
+      position: absolute;
+      <%= dir === 'rtl' ? 'right' : 'left' %>: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 1rem;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.25rem 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .divider span {
+      padding: 0 0.75rem;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .btn-guest {
+      display: block;
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-guest:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .admin-link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .admin-link:hover { color: rgba(255, 255, 255, 0.7); }
+    .admin-link i { font-size: 0.7rem; }
+    .floating-actions {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .floating-actions .btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+      border: none;
+    }
+    .floating-actions .btn:hover { transform: scale(1.1); }
+    .row-equal { display: flex; gap: 0.5rem; }
+    .row-equal > * { flex: 1; min-width: 0; }
+    <% if (dir === 'rtl') { %>
+    .login-card .input-icon-wrap .icon { left: auto; }
+    .login-card .input-icon-wrap .form-control { padding-left: 1rem; }
+    .floating-actions { left: 1.5rem; right: auto; }
+    <% } else { %>
+    .floating-actions { right: 1.5rem; left: auto; }
+    <% } %>
+  </style>
+</head>
+<body>
+  <div class="watermark-decor"></div>
+  <div class="watermark-decor"></div>
+  <div class="watermark-decor"></div>
+
+  <div class="login-card">
+    <div class="brand"><i class="bi bi-shop-window"></i> <%= __('website_name') %></div>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="alert-custom alert-success"><%= success %></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert-custom alert-danger"><%= __(error) %></div>
+    <% } %>
+
+    <div class="tab-btns">
+      <div class="tab-btn active" data-tab="customer-login"><i class="bi bi-person"></i> <%= __('customer') %></div>
+      <div class="tab-btn" data-tab="admin-login"><i class="bi bi-shield-lock"></i> <%= __('admin_employee') %></div>
+      <div class="tab-btn" data-tab="register"><i class="bi bi-person-plus"></i> <%= __('create_account') %></div>
+    </div>
+
+    <div class="tab-content active" id="tab-customer-login">
+      <form action="/login" method="POST">
+        <div class="mb-3">
+          <label class="form-label"><%= __('email') %> / <%= __('phone_number') %></label>
+          <div class="input-icon-wrap">
+            <span class="icon"><i class="bi bi-person"></i></span>
+            <input type="text" class="form-control" name="login" placeholder="<%= __('email') %> @gmail.com <%= __('or') %> <%= __('phone_number') %>" required autofocus>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label"><%= __('password') %></label>
+          <div class="input-icon-wrap">
+            <span class="icon"><i class="bi bi-lock"></i></span>
+            <input type="password" class="form-control" name="password" placeholder="<%= __('password') %>" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary-custom"><i class="bi bi-box-arrow-in-right"></i> <%= __('sign_in') %></button>
+      </form>
+      <div class="divider"><span><%= __('or') %></span></div>
+      <a href="/guest-login" class="btn-guest"><i class="bi bi-person"></i> <%= __('guest_login') %></a>
+    </div>
+
+    <div class="tab-content" id="tab-admin-login">
+      <form action="/admin-login" method="POST">
+        <div class="mb-3">
+          <label class="form-label"><%= __('email') %></label>
+          <div class="input-icon-wrap">
+            <span class="icon"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" name="email" placeholder="admin@example.com" required>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label"><%= __('password') %></label>
+          <div class="input-icon-wrap">
+            <span class="icon"><i class="bi bi-lock"></i></span>
+            <input type="password" class="form-control" name="password" placeholder="<%= __('password') %>" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary-custom"><i class="bi bi-box-arrow-in-right"></i> <%= __('admin_login') %></button>
+      </form>
+    </div>
+
+    <div class="tab-content" id="tab-register">
+      <form action="/customer-register" method="POST">
+        <div class="row-equal mb-3">
+          <div>
+            <label class="form-label"><%= __('first_name') %></label>
+            <div class="input-icon-wrap">
+              <span class="icon"><i class="bi bi-person"></i></span>
+              <input type="text" class="form-control" name="firstName" placeholder="<%= __('first_name') %>" required>
+            </div>
+          </div>
+          <div>
+            <label class="form-label"><%= __('last_name') %></label>
+            <div class="input-icon-wrap">
+              <span class="icon"><i class="bi bi-person"></i></span>
+              <input type="text" class="form-control" name="lastName" placeholder="<%= __('last_name') %>" required>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label"><%= __('country') %></label>
+          <select class="form-control" name="country" required>
+            <option value="" disabled selected><%= __('country') %></option>
+            <option value="Syria">سوريا</option>
+            <option value="Lebanon">لبنان</option>
+            <option value="Jordan">الأردن</option>
+            <option value="Iraq">العراق</option>
+            <option value="Egypt">مصر</option>
+            <option value="Saudi Arabia">السعودية</option>
+            <option value="UAE">الإمارات</option>
+            <option value="Kuwait">الكويت</option>
+            <option value="Qatar">قطر</option>
+            <option value="Bahrain">البحرين</option>
+            <option value="Oman">عُمان</option>
+            <option value="Turkey">تركيا</option>
+            <option value="Other">أخرى</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label"><%= __('email') %> (@gmail.com)</label>
+          <div class="input-icon-wrap">
+            <span class="icon">&#9993;</span>
+            <input type="email" class="form-control" name="email" placeholder="example@gmail.com" pattern=".+@gmail\.com" title="<%= __('gmail_only') %>" required>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label"><%= __('phone_number') %></label>
+          <div class="input-icon-wrap">
+            <span class="icon"><i class="bi bi-telephone"></i></span>
+            <input type="tel" class="form-control" name="phone" placeholder="<%= __('phone_number') %>" required>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label"><%= __('password') %></label>
+          <div class="input-icon-wrap">
+            <span class="icon"><i class="bi bi-lock"></i></span>
+            <input type="password" class="form-control" name="password" placeholder="<%= __('password') %>" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary-custom"><i class="bi bi-person-check"></i> <%= __('create_account') %></button>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="floating-actions">
+    <button class="btn btn-dark" id="themeToggle" title="Toggle theme"><i class="bi bi-moon-stars-fill"></i></button>
+    <div class="dropdown dropup">
+      <button class="btn btn-dark" data-bs-toggle="dropdown"><i class="bi bi-globe"></i></button>
+      <ul class="dropdown-menu mb-2">
+        <li><a class="dropdown-item <%= lang === 'ar' ? 'active' : '' %>" href="?lang=ar">العربية</a></li>
+        <li><a class="dropdown-item <%= lang === 'en' ? 'active' : '' %>" href="?lang=en">English</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+      });
+    });
+    document.getElementById('themeToggle').addEventListener('click', window.toggleTheme);
+  </script>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

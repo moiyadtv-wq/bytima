@@ -1,0 +1,78 @@
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/sidebars.js"></script>
+<script src="/js/main.js"></script>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index: 9999"></div>
+
+<!-- Confirm Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title" id="confirmModalTitle"><i class="bi bi-exclamation-triangle text-warning me-2"></i><%= __('confirm_delete') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body pt-2" id="confirmModalBody"><%= __('confirm_delete_msg') %></div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= __('cancel') %></button>
+        <button type="button" class="btn btn-danger" id="confirmModalBtn"><i class="bi bi-check-lg"></i> <%= __('yes_delete') %></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Toast notification
+function showToast(message, type) {
+  type = type || 'success';
+  const bg = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-warning';
+  const icon = type === 'success' ? 'bi-check-circle-fill' : type === 'error' ? 'bi-x-circle-fill' : 'bi-exclamation-circle-fill';
+  const container = document.getElementById('toastContainer');
+  const id = 'toast-' + Date.now();
+  const html = '<div id="' + id + '" class="toast align-items-center text-white ' + bg + ' border-0" role="alert">' +
+    '<div class="d-flex">' +
+      '<div class="toast-body"><i class="bi ' + icon + ' me-2"></i>' + message + '</div>' +
+      '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+    '</div>' +
+  '</div>';
+  container.insertAdjacentHTML('beforeend', html);
+  const el = document.getElementById(id);
+  const toast = new bootstrap.Toast(el, { delay: 3000 });
+  toast.show();
+  el.addEventListener('hidden.bs.toast', function() { el.remove(); });
+}
+
+// Confirm dialog
+function showConfirm(message, callback) {
+  document.getElementById('confirmModalBody').textContent = message;
+  const btn = document.getElementById('confirmModalBtn');
+  const newBtn = btn.cloneNode(true);
+  btn.parentNode.replaceChild(newBtn, btn);
+  newBtn.addEventListener('click', function() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+    modal.hide();
+    callback();
+  });
+  new bootstrap.Modal(document.getElementById('confirmModal')).show();
+}
+
+// Nav image upload
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.id === 'navImageInput') {
+    const file = e.target.files[0];
+    if (!file) return;
+    const form = new FormData();
+    form.append('image', file);
+    form.append('type', e.target.dataset.type);
+    fetch('/upload-profile-image', { method: 'POST', body: form })
+      .then(r => r.json())
+      .then(data => {
+        if (data.image) {
+          document.querySelectorAll('#navProfileImg').forEach(img => img.src = data.image);
+        }
+      })
+      .catch(() => {});
+  }
+});
+</script>

@@ -1,0 +1,91 @@
+<div id="sidebarId" class="position-relative d-flex flex-column flex-shrink-0 p-3 sidebar sidebar-theme">
+  <span style="right: 10px; top: 2px" class="position-absolute">
+    <button class="btn" onclick="toggleSidebar()"><i class="bi bi-x-circle"></i></button>
+  </span>
+  <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto sidebar-link text-decoration-none">
+    <i class="bi bi-shop-window"></i>
+    <span class="fs-4 sidebar-text fw-bold"><%= __('website_name') %></span>
+  </a>
+  <hr />
+
+  <% if (user) { %>
+  <!-- Admin / Employee Sidebar -->
+  <ul class="nav nav-pills flex-column mb-auto">
+    <li><a href="/dashboard" class="nav-link <%= currentPage === 'dashboard' ? 'active' : 'sidebar-link' %>"><i class="bi bi-speedometer2 me-2"></i><span class="sidebar-text"> <%= __('dashboard') %></span></a></li>
+    <li><a href="/products" class="nav-link <%= currentPage === 'products' ? 'active' : 'sidebar-link' %>"><i class="bi bi-box-seam me-2"></i><span class="sidebar-text"> <%= __('products') %></span></a></li>
+    <li><a href="/admin/orders" class="nav-link <%= currentPage === 'admin-orders' ? 'active' : 'sidebar-link' %>"><i class="bi bi-truck me-2"></i><span class="sidebar-text"> <%= __('orders') %></span></a></li>
+    <li><a href="/admin/settings" class="nav-link <%= currentPage === 'settings' ? 'active' : 'sidebar-link' %>"><i class="bi bi-gear me-2"></i><span class="sidebar-text"> <%= __('settings') %></span></a></li>
+    <li><a href="/admin/customers" class="nav-link <%= currentPage === 'admin-customers' ? 'active' : 'sidebar-link' %>"><i class="bi bi-people me-2"></i><span class="sidebar-text"> <%= __('customers') %></span></a></li>
+    <% if (user.role === 'admin') { %>
+    <li><a href="/admin/add-employee" class="nav-link <%= currentPage === 'add-employee' ? 'active' : 'sidebar-link' %>"><i class="bi bi-person-plus me-2"></i><span class="sidebar-text"> <%= __('add_employee') %></span></a></li>
+    <% } %>
+  </ul>
+  <hr />
+  <div class="dropdown">
+    <a href="#" class="d-flex align-items-center sidebar-link text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+      <strong class="sidebar-text"><%= user.email %></strong>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+      <li><a class="dropdown-item" href="/admin/profile"><i class="bi bi-person-circle me-2"></i><%= __('profile') %></a></li>
+      <li><hr class="dropdown-divider" /></li>
+      <% if (user.role === 'admin') { %>
+        <li><a class="dropdown-item" href="/admin/users"><i class="bi bi-shield-lock me-2"></i><%= __('users') %></a></li>
+        <li><a class="dropdown-item" href="/admin/activity"><i class="bi bi-activity me-2"></i><%= __('activity_log') %></a></li>
+        <li><hr class="dropdown-divider" /></li>
+      <% } %>
+      <li><a class="dropdown-item" href="/logout"><%= __('sign_out') %></a></li>
+    </ul>
+  </div>
+
+  <% } else { %>
+  <!-- Customer / Guest Sidebar -->
+  <ul class="nav nav-pills flex-column mb-auto">
+    <li><a href="/shop" class="nav-link <%= currentPage === 'shop' ? 'active' : 'sidebar-link' %>"><i class="bi bi-shop-window me-2"></i><span class="sidebar-text"> <%= __('shop') %></span></a></li>
+
+    <% if (customer) { %>
+    <li><a href="/shop/profile" class="nav-link <%= currentPage === 'profile' ? 'active' : 'sidebar-link' %>"><i class="bi bi-person-circle me-2"></i><span class="sidebar-text"> <%= __('profile') %></span></a></li>
+    <li><a href="/shop/my-orders" class="nav-link <%= currentPage === 'my-orders' ? 'active' : 'sidebar-link' %>"><i class="bi bi-box me-2"></i><span class="sidebar-text"> <%= __('my_orders') %></span></a></li>
+    <li>
+      <a href="/shop/cart" class="nav-link <%= currentPage === 'cart' ? 'active' : 'sidebar-link' %> position-relative">
+        <i class="bi bi-cart3 me-2"></i><span class="sidebar-text"> <%= __('cart') %></span>
+        <% if (session && session.cart && session.cart.length > 0) { %>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;"><%= session.cart.reduce((s,i) => s + i.quantity, 0) %></span>
+        <% } %>
+      </a>
+    </li>
+    <% } %>
+
+    <li><a href="/shop/settings" class="nav-link <%= currentPage === 'shop-settings' ? 'active' : 'sidebar-link' %>"><i class="bi bi-gear me-2"></i><span class="sidebar-text"> <%= __('settings') %></span></a></li>
+  </ul>
+
+  <hr />
+  <div class="text-center">
+    <% if (customer) { %>
+    <a href="/logout" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right me-1"></i><%= __('sign_out') %></a>
+    <% } else { %>
+    <a href="/login" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-person me-1"></i><%= __('login_register') %></a>
+    <% } %>
+  </div>
+  <% } %>
+  <!-- About Link -->
+  <div class="mt-auto">
+    <a href="/shop/about" class="btn btn-sm btn-outline-light w-100 rounded-0 d-flex align-items-center justify-content-between">
+      <span><i class="bi bi-info-circle me-1"></i> <%= __('about') %></span>
+      <i class="bi bi-arrow-left"></i>
+    </a>
+  </div>
+</div>
+
+<script>
+function toggleLang() {
+  const url = new URL(window.location);
+  url.searchParams.set('lang', '<%= lang === 'ar' ? 'en' : 'ar' %>');
+  window.location = url;
+}
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-bs-theme') || 'light';
+  html.setAttribute('data-bs-theme', current === 'dark' ? 'light' : 'dark');
+  localStorage.setItem('theme', html.getAttribute('data-bs-theme'));
+}
+</script>

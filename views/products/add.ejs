@@ -1,0 +1,81 @@
+<%- include('../partials/header') %>
+<main class="d-flex flex-nowrap">
+  <%- include('../partials/sidebar', { currentPage: 'products' }) %>
+  <div class="b-example-divider b-example-vr"></div>
+
+  <section class="w-100 p-4">
+    <%- include('../partials/navbar') %>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger alert-dismissible fade show"><%= __(error) %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <% } %>
+
+    <div class="card shadow mt-4">
+      <div class="card-header"><h5 class="mb-0"><i class="bi bi-plus-square me-2"></i><%= __('add_product') %></h5></div>
+      <div class="card-body">
+        <form action="/products/add" method="POST" enctype="multipart/form-data" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label"><%= __('name') %> *</label>
+            <input type="text" class="form-control" name="name" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label"><%= __('price') %> *</label>
+            <input type="number" step="0.01" class="form-control" name="price" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label"><%= __('old_price') %></label>
+            <input type="number" step="0.01" class="form-control" name="oldPrice" value="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label"><%= __('category') %></label>
+            <input type="text" class="form-control" name="category">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label"><%= __('weight') %></label>
+            <input type="text" class="form-control" name="weight" placeholder="<%= __('weight') %>">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label"><%= __('image') %></label>
+            <input type="file" class="form-control" name="image" accept="image/*">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label"><%= __('additional_images') %></label>
+            <input type="file" class="form-control" name="images" accept="image/*" multiple>
+          </div>
+          <div class="col-12">
+            <label class="form-label"><%= __('description') %></label>
+            <textarea class="form-control" name="description" rows="2"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label"><%= __('ingredients') %></label>
+            <textarea class="form-control" name="ingredients" rows="2"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label"><%= __('usage') %></label>
+            <textarea class="form-control" name="usage" rows="2"></textarea>
+          </div>
+          <div class="col-md-3">
+            <div class="form-check mt-4">
+              <input class="form-check-input" type="checkbox" name="inStock" checked id="inStock">
+              <label class="form-check-label" for="inStock"><%= __('in_stock_label') %></label>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-check mt-4">
+              <input class="form-check-input" type="checkbox" name="featured" id="featured">
+              <label class="form-check-label" for="featured"><%= __('featured') %></label>
+            </div>
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> <%= __('submit') %></button>
+            <a href="/products" class="btn btn-secondary"><i class="bi bi-x-lg"></i> <%= __('cancel') %></a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('../partials/scripts') %>
+</body>
+</html>

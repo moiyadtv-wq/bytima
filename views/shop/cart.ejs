@@ -1,0 +1,118 @@
+<%- include('../partials/header') %>
+<main class="d-flex flex-nowrap">
+  <%- include('../partials/sidebar', { currentPage: 'cart' }) %>
+  <div class="b-example-divider b-example-vr"></div>
+
+  <section class="w-100 p-4">
+    <%- include('../partials/navbar') %>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+      <h4 class="mb-0"><i class="bi bi-cart3 me-2"></i><%= __('shopping_cart') %></h4>
+      <% if (cart.length > 0) { %>
+        <button class="btn btn-sm btn-outline-danger" onclick="showConfirm('<%= __('clear_cart_confirm') %>', function() { document.getElementById('clearForm').submit(); })"><i class="bi bi-cart-x"></i> <%= __('clear_cart') %></button>
+        <form id="clearForm" action="/shop/cart/clear" method="POST" style="display:none"></form>
+      <% } %>
+    </div>
+
+    <% if (cart.length === 0) { %>
+      <div class="text-center py-5">
+        <i class="bi bi-cart-x" style="font-size: 3rem;"></i>
+        <h5 class="mt-2 text-muted"><%= __('empty_cart') %></h5>
+        <a href="/shop" class="btn btn-primary mt-2"><%= __('continue_shopping') %></a>
+      </div>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead><tr>
+            <th><%= __('product') %></th>
+            <th><%= __('price') %></th>
+            <th><%= __('quantity') %></th>
+            <th><%= __('total') %></th>
+            <th></th>
+          </tr></thead>
+          <tbody>
+            <% cart.forEach((item, i) => { %>
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <% if (item.image) { %>
+                      <img src="<%= item.image %>" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                    <% } %>
+                    <span><%= item.name %></span>
+                  </div>
+                </td>
+                <td><%= __('currency') %><%= item.price %></td>
+                <td style="width: 120px;">
+                  <div class="input-group input-group-sm">
+                    <button class="btn btn-outline-secondary qty-minus" data-id="<%= item.productId %>">-</button>
+                    <input type="number" class="form-control text-center qty-input" value="<%= item.quantity %>" min="1" data-id="<%= item.productId %>">
+                    <button class="btn btn-outline-secondary qty-plus" data-id="<%= item.productId %>">+</button>
+                  </div>
+                </td>
+                <td><strong><%= __('currency') %><%= (item.price * item.quantity).toFixed(2) %></strong></td>
+                <td>
+                  <button class="btn btn-sm btn-danger" onclick="showConfirm('<%= __('confirm_remove_item') %>', function() { document.getElementById('removeForm<%= i %>').submit(); })"><i class="bi bi-trash"></i></button>
+                  <form id="removeForm<%= i %>" action="/shop/cart/remove" method="POST" style="display:none">
+                    <input type="hidden" name="productId" value="<%= item.productId %>">
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <h5><%= __('total') %>: <strong><%= __('currency') %><%= subtotal.toFixed(2) %></strong></h5>
+        <div class="d-flex gap-2">
+          <a href="/shop" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> <%= __('continue_shopping') %></a>
+          <a href="/shop/checkout" class="btn btn-success"><i class="bi bi-truck"></i> <%= __('checkout') %></a>
+        </div>
+      </div>
+    <% } %>
+  </section>
+</main>
+
+<%- include('../partials/scripts') %>
+<script>
+  document.querySelectorAll('.qty-minus').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const inp = this.parentElement.querySelector('.qty-input');
+      const val = parseInt(inp.value) - 1;
+      if (val < 1) return;
+      inp.value = val;
+      await fetch('/shop/cart/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: this.dataset.id, quantity: val })
+      });
+      location.reload();
+    });
+  });
+  document.querySelectorAll('.qty-plus').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const inp = this.parentElement.querySelector('.qty-input');
+      const val = parseInt(inp.value) + 1;
+      inp.value = val;
+      await fetch('/shop/cart/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: this.dataset.id, quantity: val })
+      });
+      location.reload();
+    });
+  });
+  document.querySelectorAll('.qty-input').forEach(inp => {
+    inp.addEventListener('change', async function() {
+      const val = parseInt(this.value) || 1;
+      await fetch('/shop/cart/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: this.dataset.id, quantity: Math.max(1, val) })
+      });
+      location.reload();
+    });
+  });
+</script>
+</body>
+</html>

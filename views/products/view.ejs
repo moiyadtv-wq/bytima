@@ -1,0 +1,96 @@
+<%- include('../partials/header') %>
+<main class="d-flex flex-nowrap">
+  <%- include('../partials/sidebar', { currentPage: 'products' }) %>
+  <div class="b-example-divider b-example-vr"></div>
+
+  <section class="w-100 p-4">
+    <%- include('../partials/navbar') %>
+
+    <% if (product) { %>
+    <div class="row mt-4">
+      <div class="col-md-4 mb-3">
+        <div class="card shadow text-center p-4">
+          <% if (product.image) { %>
+            <img src="<%= product.image %>" class="img-large mx-auto d-block rounded" alt="<%= product.name %>" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#imageModal">
+          <% } else { %>
+            <div class="display-1 text-muted"><i class="bi bi-box"></i></div>
+          <% } %>
+          <% if (product.images && product.images.length > 0) { %>
+            <div class="d-flex gap-1 mt-2 justify-content-center flex-wrap">
+              <% product.images.forEach(img => { %>
+                <img src="<%= img.url || img %>" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;" onclick="document.querySelector('.img-large').src=this.src">
+              <% }) %>
+            </div>
+          <% } %>
+          <h4 class="mt-3"><%= product.name %></h4>
+          <h5 class="text-primary"><%= __('currency') %><%= product.price %>
+            <% if (product.oldPrice > 0) { %>
+              <small class="text-muted text-decoration-line-through"><%= __('currency') %><%= product.oldPrice %></small>
+            <% } %>
+          </h5>
+          <% if (product.inStock) { %>
+            <span class="badge bg-success"><%= __('in_stock') %></span>
+          <% } else { %>
+            <span class="badge bg-danger"><%= __('out_of_stock') %></span>
+          <% } %>
+          <% if (product.featured) { %>
+            <span class="badge bg-warning ms-1"><i class="bi bi-star-fill"></i> <%= __('featured') %></span>
+          <% } %>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="card shadow">
+          <div class="card-header"><h5 class="mb-0"><%= __('details') %></h5></div>
+          <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+              <tbody>
+                <tr><th style="width:30%"><%= __('name') %></th><td><%= product.name %></td></tr>
+                <tr><th><%= __('price') %></th><td><%= __('currency') %><%= product.price %></td></tr>
+                <% if (product.oldPrice > 0) { %>
+                <tr><th><%= __('old_price') %></th><td><%= __('currency') %><%= product.oldPrice %></td></tr>
+                <% } %>
+                <tr><th><%= __('category') %></th><td><%= product.category || '-' %></td></tr>
+                <tr><th><%= __('description') %></th><td><%= product.description || '-' %></td></tr>
+                <tr><th><%= __('ingredients') %></th><td><%= product.ingredients || '-' %></td></tr>
+                <tr><th><%= __('usage') %></th><td><%= product.usage || '-' %></td></tr>
+                <tr><th><%= __('weight') %></th><td><%= product.weight || '-' %></td></tr>
+                <tr><th><%= __('created') %></th><td><%= product.createdAt ? new Date(product.createdAt).toLocaleDateString() : '-' %></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-3">
+          <a href="/products" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> <%= __('back') %></a>
+          <a href="/products/edit/<%= product._id %>" class="btn btn-warning"><i class="bi bi-pencil"></i> <%= __('edit') %></a>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </section>
+</main>
+
+<%- include('../partials/scripts') %>
+
+<!-- Image Lightbox Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content bg-black">
+      <div class="modal-header border-0">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body d-flex align-items-center justify-content-center p-0">
+        <img src="" class="img-fluid" id="lightboxImage" alt="">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.img-large').forEach(img => {
+    img.addEventListener('click', function() {
+      document.getElementById('lightboxImage').src = this.src;
+    });
+  });
+</script>
+</body>
+</html>

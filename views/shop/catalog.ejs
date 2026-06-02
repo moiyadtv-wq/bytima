@@ -1,0 +1,82 @@
+<%- include('../partials/header') %>
+<main class="d-flex flex-nowrap">
+  <%- include('../partials/sidebar', { currentPage: 'shop' }) %>
+  <div class="b-example-divider b-example-vr"></div>
+
+  <section class="w-100 p-4">
+    <%- include('../partials/navbar') %>
+
+    <div class="mt-3 mb-3">
+      <h4 class="mb-3 text-center"><i class="bi bi-shop me-2"></i><%= __('our_products') %></h4>
+      <div class="d-flex justify-content-center">
+        <form class="d-flex" action="/shop" method="GET" style="max-width:400px;width:100%">
+          <div class="input-group input-group-sm w-100">
+            <input type="text" class="form-control" name="q" placeholder="<%= __('search_products') %>" value="<%= searchTerm || '' %>">
+            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success alert-dismissible fade show"><%= __(success) %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <% } %>
+
+    <div class="mb-3">
+      <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#categoryFilter" aria-expanded="<%= selectedCategory ? 'true' : 'false' %>">
+        <i class="bi bi-funnel me-1"></i><%= __('show_options') %>
+      </button>
+      <div class="collapse mt-2 <%= selectedCategory ? 'show' : '' %>" id="categoryFilter">
+        <div class="d-flex gap-2 flex-wrap">
+          <a href="/shop" class="btn btn-sm <%= !selectedCategory && !searchTerm ? 'btn-primary' : 'btn-outline-secondary' %>"><%= __('all') %></a>
+          <% categories.forEach(cat => { %>
+            <a href="/shop?category=<%= encodeURIComponent(cat) %><%= searchTerm ? '&q=' + encodeURIComponent(searchTerm) : '' %>" class="btn btn-sm <%= selectedCategory === cat ? 'btn-primary' : 'btn-outline-secondary' %>"><%= cat %></a>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <% if (products.length === 0) { %>
+        <div class="col-12 text-center py-5 text-muted"><h5><%= __('no_products') %></h5></div>
+      <% } %>
+      <% products.forEach(p => { %>
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="card shadow-sm h-100">
+            <a href="/shop/product/<%= p._id %>">
+              <img src="<%= p.image || '/img/no-image.svg' %>" class="card-img-top" alt="<%= p.name %>" style="height: 200px; object-fit: cover;">
+            </a>
+            <div class="card-body d-flex flex-column">
+              <h6 class="card-title"><a href="/shop/product/<%= p._id %>" class="text-decoration-none text-dark"><%= p.name %></a></h6>
+              <p class="mb-1"><strong><%= __('currency') %><%= p.price %></strong>
+                <% if (p.oldPrice > p.price) { %>
+                  <small class="text-muted text-decoration-line-through"><%= __('currency') %><%= p.oldPrice %></small>
+                <% } %>
+              </p>
+              <button class="btn btn-sm btn-primary mt-auto add-to-cart" data-id="<%= p._id %>">
+                <i class="bi bi-cart-plus"></i> <%= __('add_to_cart') %>
+              </button>
+              <a href="/shop/buy-now/<%= p._id %>" class="btn btn-sm btn-success mt-1">
+                <i class="bi bi-truck"></i> <%= __('buy_now') %>
+              </a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+</main>
+
+<%- include('../partials/scripts') %>
+<script>
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const id = this.dataset.id;
+      const res = await fetch('/shop/cart/add/' + id, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) showToast('<%= __('added_to_cart') %>', 'success');
+    });
+  });
+</script>
+</body>
+</html>

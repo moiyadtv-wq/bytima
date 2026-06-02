@@ -1,0 +1,38 @@
+<nav class="navbar bg-body-tertiary">
+  <div class="container-fluid justify-content-center justify-content-md-between">
+    <a class="navbar-brand fw-bold fs-3 mb-1 mb-md-0"><i class="bi bi-shop-window text-primary"></i> <%= __('website_name') %></a>
+    <div class="d-flex align-items-center gap-3">
+      <!-- User Profile -->
+      <% if (customer) { %>
+      <div class="d-flex align-items-center gap-2">
+        <div class="text-end d-none d-sm-block">
+          <div class="fw-bold small"><%= customer.name %></div>
+          <div class="text-muted" style="font-size:0.75rem"><%= __('customer') %></div>
+        </div>
+        <label style="cursor:pointer">
+          <img src="<%= customer.image || '/img/no-image.svg' %>" class="rounded-circle border" style="width:36px;height:36px;object-fit:cover" id="navProfileImg" title="<%= __('change_image') %>">
+          <input type="file" accept="image/*" class="d-none" id="navImageInput" data-type="customer">
+        </label>
+      </div>
+      <% } else if (user) { %>
+      <div class="d-flex align-items-center gap-2">
+        <div class="text-end d-none d-sm-block">
+          <div class="fw-bold small"><%= user.name || user.email %></div>
+          <div class="text-muted" style="font-size:0.75rem"><%= user.role === 'admin' ? __('role_admin') : __('role_employee') %></div>
+        </div>
+        <label style="cursor:pointer">
+          <img src="<%= user.image || '/img/no-image.svg' %>" class="rounded-circle border" style="width:36px;height:36px;object-fit:cover" id="navProfileImg" title="<%= __('change_image') %>">
+          <input type="file" accept="image/*" class="d-none" id="navImageInput" data-type="user">
+        </label>
+      </div>
+      <% } %>
+      <!-- Cart -->
+      <a href="/shop/cart" class="btn btn-sm btn-cart position-relative">
+        <i class="bi bi-cart3"></i>
+        <% if (session && session.cart && session.cart.length > 0) { %>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;"><%= session.cart.reduce((s,i) => s + i.quantity, 0) %></span>
+        <% } %>
+      </a>
+    </div>
+  </div>
+</nav>

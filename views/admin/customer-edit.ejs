@@ -1,0 +1,78 @@
+<%- include('../partials/header') %>
+<main class="d-flex flex-nowrap">
+  <%- include('../partials/sidebar', { currentPage: 'admin-customers' }) %>
+  <div class="b-example-divider b-example-vr"></div>
+
+  <section class="w-100 p-4">
+    <%- include('../partials/navbar') %>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+      <h4 class="mb-0"><i class="bi bi-pencil me-2"></i><%= __('edit_customer') %></h4>
+      <a href="/admin/customers/<%= customer._id %>" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> <%= __('back') %></a>
+    </div>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success alert-dismissible fade show"><%= success %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger alert-dismissible fade show"><%= __(error) %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <% } %>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <form action="/admin/customers/<%= customer._id %>/edit" method="POST" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label"><%= __('full_name') %></label>
+            <input type="text" class="form-control" name="name" value="<%= customer.name || (customer.firstName + ' ' + customer.lastName) || '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label"><%= __('email') %></label>
+            <input type="email" class="form-control" name="email" value="<%= customer.email || '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label"><%= __('phone') %></label>
+            <input type="tel" class="form-control" name="phone" value="<%= customer.phone || customer.phoneNumber || '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label"><%= __('password') %> <small class="text-muted">(<%= __('leave_empty') %>)</small></label>
+            <input type="password" class="form-control" name="password" placeholder="<%= __('leave_empty') %>">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label"><%= __('country') %></label>
+            <select class="form-control" name="country"><%= countries %></select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label"><%= __('governorate') %></label>
+            <input type="text" class="form-control" name="governorate" value="<%= customer.governorate || '' %>">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label"><%= __('region') %></label>
+            <input type="text" class="form-control" name="region" value="<%= customer.region || '' %>">
+          </div>
+          <div class="col-12">
+            <label class="form-label"><%= __('detailed_address') %></label>
+            <textarea class="form-control" name="detailedAddress" rows="2"><%= customer.detailedAddress || customer.address || '' %></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label"><%= __('status') %></label>
+            <select class="form-control" name="status">
+              <option value="active" <%= customer.status === 'active' || !customer.status ? 'selected' : '' %>><%= __('active') %></option>
+              <option value="blocked" <%= customer.status === 'blocked' ? 'selected' : '' %>><%= __('blocked') %></option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label"><%= __('notes') %></label>
+            <input type="text" class="form-control" name="notes" value="<%= customer.notes || '' %>">
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> <%= __('save') %></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('../partials/scripts') %>
+</body>
+</html>
