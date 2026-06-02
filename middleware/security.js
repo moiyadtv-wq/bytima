@@ -32,21 +32,25 @@ const generalLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-async function csrfProtect(req, res, next) {
-  if (!req.session.csrfSecret) {
-    req.session.csrfSecret = await tokens.secret();
-  }
-  res.locals.csrfToken = tokens.create(req.session.csrfSecret);
+const SKIP_CSRF = ["/login", "/admin-login", "/customer-register", "/guest-login", "/logout"];
 
-  if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method)) {
-    const token = req.body?._csrf || req.headers["x-csrf-token"];
-    if (!tokens.verify(req.session.csrfSecret, token)) {
-      if (req.xhr || req.headers.accept?.includes("json")) {
-        return res.status(403).json({ error: "Invalid or missing CSRF token" });
+async function csrfProtect(req, res, next) {
+  if (req.session) {
+    if (!req.session.csrfSecret) {
+      req.session.csrfSecret = await tokens.secret();
+    }
+    res.locals.csrfToken = tokens.create(req.session.csrfSecret);
+
+    if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method) && !SKIP_CSRF.includes(req.path)) {
+      const token = req.body?._csrf || req.headers["x-csrf-token"];
+      if (!tokens.verify(req.session.csrfSecret, token)) {
+        if (req.xhr || req.headers.accept?.includes("json")) {
+          return res.status(403).json({ error: "Invalid or missing CSRF token" });
+        }
+        req.session.error = "csrf_error";
+        const back = req.get("Referrer") || "/";
+        return res.redirect(back);
       }
-      req.session.error = "csrf_error";
-      const back = req.get("Referrer") || "/login";
-      return res.redirect(back);
     }
   }
   next();
