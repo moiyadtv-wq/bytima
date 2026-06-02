@@ -136,6 +136,15 @@ app.post("/admin/orders/:id/status", requireAuth, require("./controllers/adminCo
 app.get("/admin/payment-settings", requireAuth, require("./controllers/adminController").getPaymentSettings);
 app.post("/admin/payment-settings", requireAuth, require("./controllers/adminController").savePaymentSettings);
 
+// TEMP: Cleanup route - DELETE AFTER USE
+app.get("/cleanup-data", requireAuth, requireAdmin, async (req, res) => {
+  const Product = require("./models/productSchema");
+  const Order = require("./models/orderSchema");
+  const dp = await Product.deleteMany({});
+  const dor = await Order.deleteMany({});
+  res.send("Deleted " + dp.deletedCount + " products, " + dor.deletedCount + " orders");
+});
+
 // Export
 app.get("/export/people", requireAuth, require("./controllers/exportController").peopleCSV);
 app.get("/export/products", requireAuth, require("./controllers/exportController").productsCSV);
