@@ -67,7 +67,7 @@ app.use(async (req, res, next) => {
   else if (path.startsWith("/shop/my-orders")) res.locals.currentPage = "my-orders";
   else if (path.startsWith("/shop/settings") || path.startsWith("/shop/change-password")) res.locals.currentPage = "shop-settings";
   else if (path.startsWith("/products")) res.locals.currentPage = "products";
-  else if (path.startsWith("/admin/orders")) res.locals.currentPage = "admin-orders";
+  else if (path.startsWith("/admin/orders")) res.locals.currentPage = req.query.archived === "1" ? "admin-archived" : "admin-orders";
   else if (path.startsWith("/admin/settings")) res.locals.currentPage = "settings";
   else if (path.startsWith("/admin/customers")) res.locals.currentPage = "admin-customers";
   else if (path.startsWith("/admin/add-employee")) res.locals.currentPage = "add-employee";
@@ -133,17 +133,9 @@ app.post("/admin/users/:id/delete", requireAuth, requireAdmin, require("./contro
 app.get("/admin/activity", requireAuth, requireAdmin, require("./controllers/adminController").getActivity);
 app.get("/admin/orders", requireAuth, require("./controllers/adminController").getOrders);
 app.post("/admin/orders/:id/status", requireAuth, require("./controllers/adminController").updateOrderStatus);
+app.post("/admin/orders/:id/archive", requireAuth, require("./controllers/adminController").toggleArchiveOrder);
 app.get("/admin/payment-settings", requireAuth, require("./controllers/adminController").getPaymentSettings);
 app.post("/admin/payment-settings", requireAuth, require("./controllers/adminController").savePaymentSettings);
-
-// TEMP: Cleanup route - DELETE AFTER USE
-app.get("/cleanup-data", requireAuth, requireAdmin, async (req, res) => {
-  const Product = require("./models/productSchema");
-  const Order = require("./models/orderSchema");
-  const dp = await Product.deleteMany({});
-  const dor = await Order.deleteMany({});
-  res.send("Deleted " + dp.deletedCount + " products, " + dor.deletedCount + " orders");
-});
 
 // Export
 app.get("/export/people", requireAuth, require("./controllers/exportController").peopleCSV);

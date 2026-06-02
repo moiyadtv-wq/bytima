@@ -305,5 +305,11 @@
   "add_to_old_customers": "إضافة إلى العملاء القدامى",
   "confirm_add_to_old": "سيتم إضافة هذا العميل إلى قائمة العملاء القدامى، هل تريد المتابعة؟",
   "customer_added_to_old": "تمت إضافة العميل إلى العملاء القدامى بنجاح",
-  "customer_already_in_old": "العميل موجود مسبقاً في العملاء القدامى"
+  "customer_already_in_old": "العميل موجود مسبقاً في العملاء القدامى",
+  "archive": "أرشفة",
+  "unarchive": "إلغاء الأرشفة",
+  "order_archived": "تمت أرشفة الطلب!",
+  "order_unarchived": "تم إلغاء أرشفة الطلب!",
+  "active_orders": "الطلبات النشطة",
+  "archived_orders": "الطلبات المؤرشفة"
 }

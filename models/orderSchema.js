@@ -41,7 +41,8 @@ const orderSchema = new Schema({
   isReturning: { type: Boolean, default: false },
   status: { type: String, enum: ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled", "refunded"], default: "pending" },
   statusHistory: [statusHistorySchema],
-  notified: { type: Boolean, default: false }
+  notified: { type: Boolean, default: false },
+  archived: { type: Boolean, default: false }
 }, { timestamps: true });
 
 orderSchema.pre("save", async function(next) {

@@ -25,8 +25,10 @@ exports.getDashboard = async (req, res, next) => {
 
 exports.getOrders = async (req, res, next) => {
   try {
-    const { q, status } = req.query;
+    const { q, status, archived } = req.query;
     const filter = {};
+    if (archived === "1") filter.archived = true;
+    else filter.archived = { $ne: true };
     if (status && status !== "all") filter.status = status;
     if (q) {
       filter.$or = [
@@ -36,7 +38,7 @@ exports.getOrders = async (req, res, next) => {
       ];
     }
     const orders = await Order.find(filter).sort({ createdAt: -1 });
-    res.render("admin/orders", { orders, q: q || "", statusFilter: status || "all" });
+    res.render("admin/orders", { orders, q: q || "", statusFilter: status || "all", showArchived: archived === "1" });
   } catch (err) { next(err); }
 };
 
@@ -47,6 +49,18 @@ exports.updateOrderStatus = async (req, res, next) => {
     req.session.success = "order_status_updated";
     activity.log(req, "updated_order_status", "order", req.params.id, `${order ? order.customerName : ''} → ${status}`);
     res.redirect("/admin/orders");
+  } catch (err) { next(err); }
+};
+
+exports.toggleArchiveOrder = async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).render("404");
+    order.archived = !order.archived;
+    await order.save();
+    req.session.success = order.archived ? "order_archived" : "order_unarchived";
+    activity.log(req, order.archived ? "archived_order" : "unarchived_order", "order", order._id, order.customerName);
+    res.redirect("/admin/orders" + (order.archived ? "?archived=1" : ""));
   } catch (err) { next(err); }
 };
 

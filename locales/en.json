@@ -305,5 +305,11 @@
   "add_to_old_customers": "Add to Old Customers",
   "confirm_add_to_old": "This customer will be added to the old customers list, continue?",
   "customer_added_to_old": "Customer added to old customers successfully",
-  "customer_already_in_old": "Customer already exists in old customers"
+  "customer_already_in_old": "Customer already exists in old customers",
+  "archive": "Archive",
+  "unarchive": "Unarchive",
+  "order_archived": "Order archived!",
+  "order_unarchived": "Order unarchived!",
+  "active_orders": "Active Orders",
+  "archived_orders": "Archived Orders"
 }

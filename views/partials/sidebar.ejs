@@ -14,6 +14,7 @@
     <li><a href="/dashboard" class="nav-link <%= currentPage === 'dashboard' ? 'active' : 'sidebar-link' %>"><i class="bi bi-speedometer2 me-2"></i><span class="sidebar-text"> <%= __('dashboard') %></span></a></li>
     <li><a href="/products" class="nav-link <%= currentPage === 'products' ? 'active' : 'sidebar-link' %>"><i class="bi bi-box-seam me-2"></i><span class="sidebar-text"> <%= __('products') %></span></a></li>
     <li><a href="/admin/orders" class="nav-link <%= currentPage === 'admin-orders' ? 'active' : 'sidebar-link' %>"><i class="bi bi-truck me-2"></i><span class="sidebar-text"> <%= __('orders') %></span></a></li>
+    <li><a href="/admin/orders?archived=1" class="nav-link <%= currentPage === 'admin-archived' ? 'active' : 'sidebar-link' %>"><i class="bi bi-archive me-2"></i><span class="sidebar-text"> <%= __('archived_orders') %></span></a></li>
     <li><a href="/admin/settings" class="nav-link <%= currentPage === 'settings' ? 'active' : 'sidebar-link' %>"><i class="bi bi-gear me-2"></i><span class="sidebar-text"> <%= __('settings') %></span></a></li>
     <li><a href="/admin/customers" class="nav-link <%= currentPage === 'admin-customers' ? 'active' : 'sidebar-link' %>"><i class="bi bi-people me-2"></i><span class="sidebar-text"> <%= __('customers') %></span></a></li>
     <% if (user.role === 'admin') { %>
