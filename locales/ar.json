@@ -313,5 +313,8 @@
   "active_orders": "الطلبات النشطة",
   "archived_orders": "الطلبات المؤرشفة",
   "toggle_sidebar": "إظهار/إخفاء القائمة",
-  "access_denied": "تم رفض الوصول"
+  "access_denied": "تم رفض الوصول",
+  "valid_email_required": "يرجى إدخال بريد إلكتروني صحيح",
+  "password_required": "كلمة السر مطلوبة",
+  "csrf_error": "خطأ في إرسال النموذج، يرجى المحاولة مرة أخرى"
 }

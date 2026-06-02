@@ -45,7 +45,8 @@ async function csrfProtect(req, res, next) {
         return res.status(403).json({ error: "Invalid or missing CSRF token" });
       }
       req.session.error = "csrf_error";
-      return res.redirect("back");
+      const back = req.get("Referrer") || "/login";
+      return res.redirect(back);
     }
   }
   next();
