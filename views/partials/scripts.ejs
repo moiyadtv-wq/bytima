@@ -1,11 +1,12 @@
 <script>
 function toggleMobileSidebar() {
   document.querySelector('.sidebar').classList.toggle('open');
-  document.getElementById('sidebarBackdrop').classList.toggle('show');
+  var b = document.getElementById('sidebarBackdrop');
+  if (b) b.classList.toggle('show');
 }
 function toggleSidebar() {
   if (window.innerWidth < 768) { toggleMobileSidebar(); return; }
-  document.querySelector('.sidebar').classList.toggle('small-sidebar');
+  document.querySelector('.sidebar').classList.toggle('sidebar-hidden');
 }
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {

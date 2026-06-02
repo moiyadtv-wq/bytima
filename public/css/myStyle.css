@@ -11,6 +11,12 @@
 .small-sidebar {
   width: 77px;
 }
+.sidebar-hidden {
+  width: 0 !important;
+  overflow: hidden;
+  padding: 0 !important;
+  border: none !important;
+}
 
 .small-sidebar .sidebar-text {
   display: none;
