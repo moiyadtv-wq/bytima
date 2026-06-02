@@ -10,6 +10,9 @@ const i18n = require("./middleware/i18n");
 const app = express();
 const port = process.env.PORT || 3000;
 
+console.log('MONGODB_URI prefix:', process.env.MONGODB_URI ? process.env.MONGODB_URI.substring(0, 20) + '...' : 'UNDEFINED');
+console.log('MONGODB_URI length:', process.env.MONGODB_URI ? process.env.MONGODB_URI.length : 0);
+
 if (!process.env.SESSION_SECRET) {
   console.error('❌ SESSION_SECRET is not set in .env');
   process.exit(1);
