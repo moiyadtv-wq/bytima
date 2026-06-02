@@ -65,12 +65,15 @@
                       <% if (user.role === 'admin') { %>
                       <a href="/admin/customers/<%= c._id %>/edit" class="btn btn-sm btn-warning" title="<%= __('edit') %>"><i class="bi bi-pencil"></i></a>
                       <form action="/admin/customers/<%= c._id %>/toggle-status" method="POST" style="display:inline">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <button class="btn btn-sm btn-<%= c.status === 'blocked' ? 'success' : 'secondary' %>" title="<%= c.status === 'blocked' ? __('activate') : __('deactivate') %>">
                           <i class="bi bi-<%= c.status === 'blocked' ? 'check-circle' : 'pause-circle' %>"></i>
                         </button>
                       </form>
-                      <button class="btn btn-sm btn-danger" title="<%= __('delete') %>" onclick="showConfirm('<%= __('confirm_delete') %>', function() { document.getElementById('deleteCustomer<%= c._id %>').submit(); })"><i class="bi bi-trash"></i></button>
-                      <form id="deleteCustomer<%= c._id %>" action="/admin/customers/<%= c._id %>/delete" method="POST" style="display:none"></form>
+                      <button class="btn btn-sm btn-danger" title="<%= __('delete') %>" id="deleteBtn<%= c._id %>" data-confirm-msg="<%= __('confirm_delete') %>" data-form-id="deleteCustomer<%= c._id %>"><i class="bi bi-trash"></i></button>
+                      <form id="deleteCustomer<%= c._id %>" action="/admin/customers/<%= c._id %>/delete" method="POST" style="display:none">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                      </form>
                       <% } %>
                     </div>
                   </td>
@@ -85,5 +88,12 @@
 </main>
 
 <%- include('../partials/scripts') %>
+<script nonce="<%= nonce %>">
+  document.querySelectorAll('[data-confirm-msg]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      showConfirm(this.getAttribute('data-confirm-msg'), function() { document.getElementById(this.getAttribute('data-form-id')).submit(); }.bind(this));
+    });
+  });
+</script>
 </body>
 </html>

@@ -14,6 +14,9 @@ exports.login = async (req, res, next) => {
     if (!user) return res.render("auth/login", { error: "invalid_email_password" });
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.render("auth/login", { error: "invalid_email_password" });
+    await new Promise((resolve, reject) => {
+      req.session.regenerate((err) => { if (err) reject(err); else resolve(); });
+    });
     req.session.user = { id: user._id, email: user.email, role: user.role, name: user.name || user.email };
     res.redirect("/");
   } catch (err) { next(err); }
@@ -35,6 +38,9 @@ exports.customerLogin = async (req, res, next) => {
     const match = await bcrypt.compare(password, customer.password);
     if (!match) return res.render("auth/login", { error: "invalid_login" });
 
+    await new Promise((resolve, reject) => {
+      req.session.regenerate((err) => { if (err) reject(err); else resolve(); });
+    });
     req.session.customer = { id: customer._id, name: customer.name, phone: customer.phone, image: customer.image || "" };
     res.redirect("/shop");
   } catch (err) { next(err); }

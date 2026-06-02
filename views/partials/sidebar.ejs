@@ -1,6 +1,6 @@
 <div id="sidebarId" class="position-relative d-flex flex-column flex-shrink-0 p-3 sidebar sidebar-theme">
   <span style="right: 10px; top: 2px" class="position-absolute">
-    <button class="btn" onclick="toggleSidebar()"><i class="bi bi-x-circle"></i></button>
+    <button class="btn" id="sidebarCloseBtn"><i class="bi bi-x-circle"></i></button>
   </span>
   <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto sidebar-link text-decoration-none">
     <i class="bi bi-shop-window"></i>
@@ -77,7 +77,7 @@
   </div>
 </div>
 
-<script>
+<script nonce="<%= nonce %>">
 function toggleLang() {
   const url = new URL(window.location);
   url.searchParams.set('lang', '<%= lang === 'ar' ? 'en' : 'ar' %>');
@@ -89,4 +89,5 @@ function toggleTheme() {
   html.setAttribute('data-bs-theme', current === 'dark' ? 'light' : 'dark');
   localStorage.setItem('theme', html.getAttribute('data-bs-theme'));
 }
+document.getElementById('sidebarCloseBtn').addEventListener('click', toggleSidebar);
 </script>

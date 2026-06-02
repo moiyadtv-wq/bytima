@@ -21,6 +21,7 @@
     <div class="card shadow-sm">
       <div class="card-body">
         <form action="/admin/customers/<%= customer._id %>/edit" method="POST" class="row g-3">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <div class="col-md-6">
             <label class="form-label"><%= __('full_name') %></label>
             <input type="text" class="form-control" name="name" value="<%= customer.name || (customer.firstName + ' ' + customer.lastName) || '' %>">

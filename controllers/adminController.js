@@ -31,10 +31,11 @@ exports.getOrders = async (req, res, next) => {
     else filter.archived = { $ne: true };
     if (status && status !== "all") filter.status = status;
     if (q) {
+      const safe = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       filter.$or = [
-        { customerName: { $regex: q, $options: "i" } },
-        { customerPhone: { $regex: q, $options: "i" } },
-        { orderNumber: { $regex: q, $options: "i" } }
+        { customerName: { $regex: safe, $options: "i" } },
+        { customerPhone: { $regex: safe, $options: "i" } },
+        { orderNumber: { $regex: safe, $options: "i" } }
       ];
     }
     const orders = await Order.find(filter).sort({ createdAt: -1 });

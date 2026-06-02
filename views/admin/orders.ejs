@@ -117,7 +117,8 @@
               <div class="col-md-3">
                 <div class="p-3 bg-light rounded">
                   <h6 class="mb-2"><i class="bi bi-gear me-1"></i> <%= __('actions') %></h6>
-                  <form action="/admin/orders/<%= order._id %>/status" method="POST">
+                    <form action="/admin/orders/<%= order._id %>/status" method="POST">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                     <select class="form-select form-select-sm mb-2" name="status">
                       <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>><%= __('pending') %></option>
                       <option value="confirmed" <%= order.status === 'confirmed' ? 'selected' : '' %>><%= __('confirmed') %></option>
@@ -133,6 +134,7 @@
                       </button>
                     </div>
                     <form action="/admin/orders/<%= order._id %>/archive" method="POST" class="mt-1">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                       <button type="submit" class="btn btn-sm btn-<%= order.archived ? 'warning' : 'secondary' %> w-100">
                         <i class="bi bi-<%= order.archived ? 'archive-fill' : 'archive' %>"></i> <%= order.archived ? __('unarchive') : __('archive') %>
                       </button>
@@ -154,7 +156,7 @@
 </main>
 
 <%- include('../partials/scripts') %>
-<script>
+<script nonce="<%= nonce %>">
   function formatPhone(phone) {
     let p = phone.replace(/[^\d]/g, '');
     if (p.startsWith('00')) p = p.slice(2);

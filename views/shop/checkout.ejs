@@ -18,6 +18,7 @@
           <div class="card-body">
               <h5><%= __('shipping_details') %></h5>
               <form action="/shop/checkout" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <div class="mb-3">
                   <label class="form-label"><%= __('full_name') %> *</label>
                   <input type="text" class="form-control" name="customerName" placeholder="<%= __('full_name') %>" value="<%= customer ? customer.name : '' %>" required>

@@ -74,7 +74,7 @@
                   <td>
                     <a data-bs-toggle="tooltip" data-bs-title="<%= __('view') %>" class="btn btn-primary btn-sm" href="/customers/view/<%= p._id %>"><i class="bi bi-eye"></i></a>
                     <a data-bs-toggle="tooltip" data-bs-title="<%= __('edit') %>" class="btn btn-warning btn-sm" href="/customers/edit/<%= p._id %>"><i class="bi bi-pencil"></i></a>
-                    <button data-bs-toggle="tooltip" data-bs-title="<%= __('delete') %>" class="btn btn-danger btn-sm" onclick="deleteUser('<%= p._id %>')"><i class="bi bi-trash"></i></button>
+                    <button data-bs-toggle="tooltip" data-bs-title="<%= __('delete') %>" class="btn btn-danger btn-sm" id="deleteUserBtn<%= p._id %>" data-user-id="<%= p._id %>"><i class="bi bi-trash"></i></button>
                   </td>
                 </tr>
               <% }) %>
@@ -89,13 +89,18 @@
 </main>
 
 <%- include('partials/scripts') %>
-<script>
+<script nonce="<%= nonce %>">
   async function deleteUser(id) {
     if (!confirm('<%= __('confirm_delete') %>')) return;
     const res = await fetch('/customers/delete/' + id, { method: 'POST' });
     if (res.ok) location.href = '/';
     else alert('<%= __('error_occurred') %>');
   }
+  document.querySelectorAll('[data-user-id]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      deleteUser(this.getAttribute('data-user-id'));
+    });
+  });
 </script>
 </body>
 </html>

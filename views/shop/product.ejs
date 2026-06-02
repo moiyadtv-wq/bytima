@@ -19,7 +19,7 @@
         <% if (product.images && product.images.length > 0) { %>
           <div class="d-flex gap-2 mt-2 flex-wrap">
             <% product.images.forEach(img => { %>
-              <img src="<%= img.url || img %>" class="img-thumbnail" style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;" onclick="document.querySelector('.main-image').src=this.src">
+              <img src="<%= img.url || img %>" class="img-thumbnail" style="width: 70px; height: 70px; object-fit: cover; cursor: pointer;" data-thumb="true">
             <% }) %>
           </div>
         <% } %>
@@ -102,7 +102,7 @@
   </div>
 </div>
 
-<script>
+<script nonce="<%= nonce %>">
   document.querySelectorAll('.main-image').forEach(img => {
     img.addEventListener('click', function() {
       document.getElementById('lightboxImage').src = this.src;
@@ -114,6 +114,11 @@
       const res = await fetch('/shop/cart/add/' + id, { method: 'POST' });
       const data = await res.json();
       if (data.success) showToast('<%= __('added_to_cart') %>', 'success');
+    });
+  });
+  document.querySelectorAll('[data-thumb]').forEach(function(img) {
+    img.addEventListener('click', function() {
+      document.querySelector('.main-image').src = this.src;
     });
   });
 </script>

@@ -22,10 +22,13 @@
                 <td><%= u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-' %></td>
                 <td>
                   <form action="/admin/users/<%= u._id %>/toggle-role" method="POST" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                     <button class="btn btn-sm btn-warning"><%= __('toggle_admin') %></button>
                   </form>
-                  <button class="btn btn-sm btn-danger" onclick="showConfirm('<%= __('confirm_delete_msg') %>', function() { document.getElementById('deleteUser<%= u._id %>').submit(); })"><%= __('delete') %></button>
-                  <form id="deleteUser<%= u._id %>" action="/admin/users/<%= u._id %>/delete" method="POST" style="display:none"></form>
+                  <button class="btn btn-sm btn-danger" id="deleteUserBtn<%= u._id %>" data-confirm-msg="<%= __('confirm_delete_msg') %>" data-form-id="deleteUser<%= u._id %>"><%= __('delete') %></button>
+                  <form id="deleteUser<%= u._id %>" action="/admin/users/<%= u._id %>/delete" method="POST" style="display:none">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  </form>
                 </td>
               </tr>
             <% }) %>
@@ -37,5 +40,12 @@
 </main>
 
 <%- include('../partials/scripts') %>
+<script nonce="<%= nonce %>">
+  document.querySelectorAll('[data-confirm-msg]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      showConfirm(this.getAttribute('data-confirm-msg'), function() { document.getElementById(this.getAttribute('data-form-id')).submit(); }.bind(this));
+    });
+  });
+</script>
 </body>
 </html>

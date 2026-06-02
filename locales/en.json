@@ -312,5 +312,6 @@
   "order_unarchived": "Order unarchived!",
   "active_orders": "Active Orders",
   "archived_orders": "Archived Orders",
-  "toggle_sidebar": "Show/Hide Sidebar"
+  "toggle_sidebar": "Show/Hide Sidebar",
+  "access_denied": "Access Denied"
 }

@@ -18,12 +18,13 @@
     <div class="card shadow-sm">
       <div class="card-body">
         <form action="/shop/profile" method="POST" enctype="multipart/form-data" class="row g-3">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <!-- Profile Image -->
           <div class="col-12 text-center mb-3">
             <img src="<%= customer.image || '/img/no-image.svg' %>" class="rounded-circle border" style="width:120px;height:120px;object-fit:cover" id="profilePreview">
             <div class="mt-2">
               <label class="btn btn-sm btn-outline-primary"><i class="bi bi-camera"></i> <%= __('choose_image') %>
-                <input type="file" name="image" accept="image/*" class="d-none" onchange="document.getElementById('profilePreview').src=URL.createObjectURL(this.files[0])">
+                <input type="file" name="image" accept="image/*" class="d-none" id="profileImageInput">
               </label>
               <small class="text-muted d-block"><%= __('optional') %></small>
             </div>
@@ -98,5 +99,10 @@
 </main>
 
 <%- include('../partials/scripts') %>
+<script nonce="<%= nonce %>">
+  document.getElementById('profileImageInput').addEventListener('change', function() {
+    document.getElementById('profilePreview').src = URL.createObjectURL(this.files[0]);
+  });
+</script>
 </body>
 </html>

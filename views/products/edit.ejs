@@ -15,6 +15,7 @@
       <div class="card-header"><h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i><%= __('edit_product') %></h5></div>
       <div class="card-body">
         <form action="/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data" class="row g-3">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <div class="col-md-6">
             <label class="form-label"><%= __('name') %> *</label>
             <input type="text" class="form-control" name="name" value="<%= product.name %>" required>

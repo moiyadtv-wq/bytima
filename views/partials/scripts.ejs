@@ -1,4 +1,4 @@
-<script>
+<script nonce="<%= nonce %>">
 function toggleMobileSidebar() {
   document.querySelector('.sidebar').classList.toggle('open');
   var b = document.getElementById('sidebarBackdrop');
@@ -14,10 +14,12 @@ document.addEventListener('keydown', function(e) {
     if (s && s.classList.contains('open')) toggleMobileSidebar();
   }
 });
+document.getElementById('navbarToggleBtn').addEventListener('click', toggleSidebar);
+document.getElementById('sidebarBackdrop').addEventListener('click', toggleMobileSidebar);
 </script>
-<script src="/js/bootstrap.bundle.min.js"></script>
-<script src="/js/sidebars.js"></script>
-<script src="/js/main.js"></script>
+<script nonce="<%= nonce %>" src="/js/bootstrap.bundle.min.js"></script>
+<script nonce="<%= nonce %>" src="/js/sidebars.js"></script>
+<script nonce="<%= nonce %>" src="/js/main.js"></script>
 
 <!-- Toast Container -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index: 9999"></div>
@@ -39,7 +41,7 @@ document.addEventListener('keydown', function(e) {
   </div>
 </div>
 
-<script>
+<script nonce="<%= nonce %>">
 // Toast notification
 function showToast(message, type) {
   type = type || 'success';

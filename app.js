@@ -9,6 +9,11 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo').MongoStore;
 const helmet = require('helmet');
 const i18n = require("./middleware/i18n");
+const { requireAuth, requireAdmin } = require("./middleware/auth");
+const { generalLimiter, authLimiter, apiLimiter, checkoutLimiter, csrfProtect } = require("./middleware/security");
+const { loginRules, customerLoginRules, registerRules, checkoutRules, productRules, changePasswordRules, handleValidation } = require("./middleware/validation");
+
+const crypto = require("crypto");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -28,9 +33,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(generalLimiter);
+
 app.use(helmet({
-  contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
+  contentSecurityPolicy: {
+    useDefaults: false,
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      fontSrc: ["'self'"],
+      connectSrc: ["'self'"],
+      formAction: ["'self'"],
+      frameAncestors: ["'none'"],
+      baseUri: ["'self'"],
+      objectSrc: ["'none'"]
+    },
+    reportOnly: false,
+  },
+  crossOriginEmbedderPolicy: false,
+  strictTransportSecurity: { maxAge: 31536000, includeSubDomains: true, preload: true }
 }));
 
 app.use(session({
@@ -41,13 +64,21 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 14 * 24 * 60 * 60 * 1000 }
+  cookie: {
+    maxAge: 14 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production"
+  }
 }));
 
 app.use(i18n);
 app.use(require("./middleware/flash"));
 
+app.use(csrfProtect);
+
 app.use(async (req, res, next) => {
+  res.locals.nonce = crypto.randomBytes(16).toString("hex");
   res.locals.user = req.session.user || null;
   res.locals.customer = req.session.customer || null;
   res.locals.session = req.session;
@@ -75,26 +106,13 @@ app.use(async (req, res, next) => {
   next();
 });
 
-function requireAuth(req, res, next) {
-  if (!req.session.user) return res.redirect("/login");
-  next();
-}
-
-function requireAdmin(req, res, next) {
-  if (req.session.user.role !== "admin") {
-    req.session.error = "admin_access";
-    return res.redirect("/");
-  }
-  next();
-}
-
 const upload = require("./middleware/upload");
 
 // Shop - public e-commerce routes (must be before auth-required routes)
 app.use("/shop", require("./routes/shopRoutes"));
 
-app.use("/", require("./routes/authRoutes"));
-app.use("/api", require("./routes/apiRoutes"));
+app.use("/", authLimiter, require("./routes/authRoutes"));
+app.use("/api", apiLimiter, require("./routes/apiRoutes"));
 
 // Homepage: landing page for guests, dashboard for logged-in
 app.get("/", async (req, res, next) => {
@@ -124,7 +142,7 @@ app.post("/upload-profile-image", requireAuth, upload.single("image"), require("
 app.get("/admin/add-employee", requireAuth, requireAdmin, require("./controllers/adminController").getAddEmployee);
 app.post("/admin/add-employee", requireAuth, requireAdmin, require("./controllers/adminController").createEmployee);
 app.get("/admin/change-password", requireAuth, require("./controllers/adminController").getChangePassword);
-app.post("/admin/change-password", requireAuth, require("./controllers/adminController").changePassword);
+app.post("/admin/change-password", requireAuth, changePasswordRules, handleValidation, require("./controllers/adminController").changePassword);
 app.get("/admin/profile", requireAuth, require("./controllers/adminController").getProfile);
 app.post("/admin/profile", requireAuth, upload.single("image"), require("./controllers/adminController").updateProfile);
 app.get("/admin/users", requireAuth, requireAdmin, require("./controllers/adminController").getUsers);

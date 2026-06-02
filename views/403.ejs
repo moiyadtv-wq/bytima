@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="<%= lang || 'en' %>" data-bs-theme="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>403 - <%= __('access_denied') %></title>
+  <link href="/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="d-flex align-items-center justify-content-center vh-100 bg-body-tertiary">
+  <div class="text-center">
+    <h1 class="display-1 fw-bold text-danger">403</h1>
+    <p class="fs-3"><%= __('access_denied') %></p>
+    <a href="/" class="btn btn-primary"><%= __('back_to_home') %></a>
+  </div>
+</body>
+</html>

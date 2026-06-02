@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= lang %>" dir="<%= dir %>">
 <head>
-  <script src="/js/color-modes.js"></script>
+  <script nonce="<%= nonce %>" src="/js/color-modes.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= __('website_name') %> - <%= __('login') %></title>
@@ -263,6 +263,7 @@
 
     <div class="tab-content active" id="tab-customer-login">
       <form action="/login" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <div class="mb-3">
           <label class="form-label"><%= __('email') %> / <%= __('phone_number') %></label>
           <div class="input-icon-wrap">
@@ -285,6 +286,7 @@
 
     <div class="tab-content" id="tab-admin-login">
       <form action="/admin-login" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <div class="mb-3">
           <label class="form-label"><%= __('email') %></label>
           <div class="input-icon-wrap">
@@ -305,6 +307,7 @@
 
     <div class="tab-content" id="tab-register">
       <form action="/customer-register" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <div class="row-equal mb-3">
           <div>
             <label class="form-label"><%= __('first_name') %></label>
@@ -378,7 +381,7 @@
     </div>
   </div>
 
-  <script>
+  <script nonce="<%= nonce %>">
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -389,6 +392,6 @@
     });
     document.getElementById('themeToggle').addEventListener('click', window.toggleTheme);
   </script>
-  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script nonce="<%= nonce %>" src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

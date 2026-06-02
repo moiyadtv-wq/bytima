@@ -20,8 +20,8 @@
       <div class="card-body">
         <h5 class="card-title"><i class="bi bi-palette me-2"></i><%= __('appearance') %></h5>
         <div class="d-flex gap-2 mt-3">
-          <button class="btn btn-outline-primary flex-fill" onclick="toggleLang()"><i class="bi bi-globe me-1"></i> <%= __('language') %>: <%= lang === 'ar' ? 'العربية' : 'English' %></button>
-          <button class="btn btn-outline-primary flex-fill" onclick="toggleTheme()"><i class="bi bi-moon-stars-fill me-1"></i> <%= __('theme') %></button>
+          <button class="btn btn-outline-primary flex-fill" id="settingsLangBtn"><i class="bi bi-globe me-1"></i> <%= __('language') %>: <%= lang === 'ar' ? 'العربية' : 'English' %></button>
+          <button class="btn btn-outline-primary flex-fill" id="settingsThemeBtn"><i class="bi bi-moon-stars-fill me-1"></i> <%= __('theme') %></button>
         </div>
       </div>
     </div>
@@ -55,6 +55,7 @@
       <div class="card-body">
         <h5 class="card-title"><i class="bi bi-credit-card me-2"></i><%= __('payment_methods') %></h5>
         <form action="/admin/settings" method="POST" class="row g-3 mt-1">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <div class="col-md-6">
             <label class="form-label"><%= __('sham_cash_name') %></label>
             <input type="text" class="form-control" name="shamCashName" value="<%= shamCashName || '' %>">
@@ -106,7 +107,7 @@
 </main>
 
 <%- include('../partials/scripts') %>
-<script>
+<script nonce="<%= nonce %>">
   document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
       document.querySelectorAll('.alert-dismissible').forEach(el => {
@@ -115,6 +116,8 @@
       });
     }, 100);
   });
+  document.getElementById('settingsLangBtn').addEventListener('click', toggleLang);
+  document.getElementById('settingsThemeBtn').addEventListener('click', toggleTheme);
 </script>
 </body>
 </html>

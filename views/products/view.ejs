@@ -18,7 +18,7 @@
           <% if (product.images && product.images.length > 0) { %>
             <div class="d-flex gap-1 mt-2 justify-content-center flex-wrap">
               <% product.images.forEach(img => { %>
-                <img src="<%= img.url || img %>" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;" onclick="document.querySelector('.img-large').src=this.src">
+                <img src="<%= img.url || img %>" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;" data-thumb="true">
               <% }) %>
             </div>
           <% } %>
@@ -85,10 +85,15 @@
   </div>
 </div>
 
-<script>
+<script nonce="<%= nonce %>">
   document.querySelectorAll('.img-large').forEach(img => {
     img.addEventListener('click', function() {
       document.getElementById('lightboxImage').src = this.src;
+    });
+  });
+  document.querySelectorAll('[data-thumb]').forEach(function(img) {
+    img.addEventListener('click', function() {
+      document.querySelector('.img-large').src = this.src;
     });
   });
 </script>

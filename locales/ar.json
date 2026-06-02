@@ -312,5 +312,6 @@
   "order_unarchived": "تم إلغاء أرشفة الطلب!",
   "active_orders": "الطلبات النشطة",
   "archived_orders": "الطلبات المؤرشفة",
-  "toggle_sidebar": "إظهار/إخفاء القائمة"
+  "toggle_sidebar": "إظهار/إخفاء القائمة",
+  "access_denied": "تم رفض الوصول"
 }

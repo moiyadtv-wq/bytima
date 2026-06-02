@@ -10,8 +10,9 @@ exports.getCatalog = async (req, res, next) => {
     const filter = {};
     if (category) filter.category = category;
     if (q) {
+      const safe = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       filter.$or = [
-        { name: { $regex: q, $options: "i" } },
+        { name: { $regex: safe, $options: "i" } },
         { _id: q.match(/^[0-9a-fA-F]{24}$/) ? q : undefined }
       ].filter(Boolean);
       if (!filter.$or.length) delete filter.$or;
@@ -218,6 +219,9 @@ exports.getOrder = async (req, res, next) => {
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) return res.status(404).render("404");
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).render("404");
+    if (!req.session.customer || order.customerId?.toString() !== req.session.customer.id) {
+      return res.status(403).render("403");
+    }
     res.render("shop/order", { order });
   } catch (err) { next(err); }
 };

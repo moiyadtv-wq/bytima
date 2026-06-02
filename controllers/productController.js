@@ -3,6 +3,16 @@ const fs = require("fs");
 const path = require("path");
 const activity = require("../services/activityLogger");
 
+const PRODUCT_ALLOWED = ["name", "nameAr", "description", "descriptionAr", "price", "oldPrice", "category", "stock", "image", "images", "inStock", "featured", "weight", "howToUse", "howToUseAr", "ingredients", "ingredientsAr", "usage", "usageAr"];
+
+function sanitizeProduct(body) {
+  const clean = {};
+  for (const key of PRODUCT_ALLOWED) {
+    if (body[key] !== undefined) clean[key] = body[key];
+  }
+  return clean;
+}
+
 exports.getAll = async (req, res, next) => {
   try {
     const products = await Product.find();
@@ -16,13 +26,14 @@ exports.getAddForm = (req, res) => {
 
 exports.create = async (req, res, next) => {
   try {
-    if (req.files && req.files.image && req.files.image[0]) req.body.image = "/uploads/" + req.files.image[0].filename;
+    const data = sanitizeProduct(req.body);
+    if (req.files && req.files.image && req.files.image[0]) data.image = "/uploads/" + req.files.image[0].filename;
     if (req.files && req.files.images && req.files.images.length > 0) {
-      req.body.images = req.files.images.map(f => ({ url: "/uploads/" + f.filename, alt: "", isPrimary: false }));
+      data.images = req.files.images.map(f => ({ url: "/uploads/" + f.filename, alt: "", isPrimary: false }));
     }
-    req.body.inStock = req.body.inStock === "on" || req.body.inStock === true;
-    req.body.featured = req.body.featured === "on" || req.body.featured === true;
-    const p = await Product.create(req.body);
+    data.inStock = req.body.inStock === "on" || req.body.inStock === true;
+    data.featured = req.body.featured === "on" || req.body.featured === true;
+    const p = await Product.create(data);
     req.session.success = "product_added";
     activity.log(req, "added_product", "product", p._id, p.name);
     res.redirect("/products");
@@ -53,13 +64,14 @@ exports.getEditForm = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
-    if (req.files && req.files.image && req.files.image[0]) req.body.image = "/uploads/" + req.files.image[0].filename;
+    const data = sanitizeProduct(req.body);
+    if (req.files && req.files.image && req.files.image[0]) data.image = "/uploads/" + req.files.image[0].filename;
     if (req.files && req.files.images && req.files.images.length > 0) {
-      req.body.images = req.files.images.map(f => ({ url: "/uploads/" + f.filename, alt: "", isPrimary: false }));
+      data.images = req.files.images.map(f => ({ url: "/uploads/" + f.filename, alt: "", isPrimary: false }));
     }
-    req.body.inStock = req.body.inStock === "on" || req.body.inStock === true;
-    req.body.featured = req.body.featured === "on" || req.body.featured === true;
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { runValidators: true });
+    data.inStock = req.body.inStock === "on" || req.body.inStock === true;
+    data.featured = req.body.featured === "on" || req.body.featured === true;
+    const product = await Product.findByIdAndUpdate(req.params.id, data, { runValidators: true });
     if (!product) return res.status(404).render("404");
     req.session.success = "product_updated";
     activity.log(req, "updated_product", "product", product._id, product.name);

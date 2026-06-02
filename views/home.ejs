@@ -157,7 +157,7 @@
 </main>
 
 <div class="floating-actions">
-  <button class="btn btn-dark" onclick="toggleTheme()" title="Toggle theme"><i class="bi bi-moon-stars-fill"></i></button>
+  <button class="btn btn-dark" id="homeThemeBtn" title="Toggle theme"><i class="bi bi-moon-stars-fill"></i></button>
   <div class="dropdown dropup">
     <button class="btn btn-dark" data-bs-toggle="dropdown"><i class="bi bi-globe"></i></button>
     <ul class="dropdown-menu mb-2">
@@ -168,5 +168,8 @@
 </div>
 
 <%- include('partials/scripts') %>
+<script nonce="<%= nonce %>">
+  document.getElementById('homeThemeBtn').addEventListener('click', toggleTheme);
+</script>
 </body>
 </html>

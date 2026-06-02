@@ -9,8 +9,10 @@
     <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
       <h4 class="mb-0"><i class="bi bi-cart3 me-2"></i><%= __('shopping_cart') %></h4>
       <% if (cart.length > 0) { %>
-        <button class="btn btn-sm btn-outline-danger" onclick="showConfirm('<%= __('clear_cart_confirm') %>', function() { document.getElementById('clearForm').submit(); })"><i class="bi bi-cart-x"></i> <%= __('clear_cart') %></button>
-        <form id="clearForm" action="/shop/cart/clear" method="POST" style="display:none"></form>
+        <button class="btn btn-sm btn-outline-danger" id="clearCartBtn" data-confirm-msg="<%= __('clear_cart_confirm') %>" data-form-id="clearForm"><i class="bi bi-cart-x"></i> <%= __('clear_cart') %></button>
+        <form id="clearForm" action="/shop/cart/clear" method="POST" style="display:none">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        </form>
       <% } %>
     </div>
 
@@ -51,8 +53,9 @@
                 </td>
                 <td><strong><%= __('currency') %><%= (item.price * item.quantity).toFixed(2) %></strong></td>
                 <td>
-                  <button class="btn btn-sm btn-danger" onclick="showConfirm('<%= __('confirm_remove_item') %>', function() { document.getElementById('removeForm<%= i %>').submit(); })"><i class="bi bi-trash"></i></button>
+                  <button class="btn btn-sm btn-danger" id="removeItemBtn<%= i %>" data-confirm-msg="<%= __('confirm_remove_item') %>" data-form-id="removeForm<%= i %>"><i class="bi bi-trash"></i></button>
                   <form id="removeForm<%= i %>" action="/shop/cart/remove" method="POST" style="display:none">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                     <input type="hidden" name="productId" value="<%= item.productId %>">
                   </form>
                 </td>
@@ -74,7 +77,7 @@
 </main>
 
 <%- include('../partials/scripts') %>
-<script>
+<script nonce="<%= nonce %>">
   document.querySelectorAll('.qty-minus').forEach(btn => {
     btn.addEventListener('click', async function() {
       const inp = this.parentElement.querySelector('.qty-input');
@@ -111,6 +114,11 @@
         body: JSON.stringify({ productId: this.dataset.id, quantity: Math.max(1, val) })
       });
       location.reload();
+    });
+  });
+  document.querySelectorAll('[data-confirm-msg]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      showConfirm(this.getAttribute('data-confirm-msg'), function() { document.getElementById(this.getAttribute('data-form-id')).submit(); }.bind(this));
     });
   });
 </script>

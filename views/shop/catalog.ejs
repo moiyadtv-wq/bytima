@@ -68,7 +68,7 @@
 </main>
 
 <%- include('../partials/scripts') %>
-<script>
+<script nonce="<%= nonce %>">
   document.querySelectorAll('.add-to-cart').forEach(btn => {
     btn.addEventListener('click', async function() {
       const id = this.dataset.id;

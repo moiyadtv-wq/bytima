@@ -17,6 +17,7 @@
       <div class="card-header"><h5 class="mb-0"><i class="bi bi-credit-card me-2"></i><%= __('payment_settings') %></h5></div>
       <div class="card-body">
         <form action="/admin/payment-settings" method="POST" class="row g-3">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <div class="col-12">
             <h6 class="text-primary"><i class="bi bi-phone"></i> <%= __('sham_cash') %></h6>
           </div>
