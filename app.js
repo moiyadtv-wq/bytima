@@ -1,3 +1,6 @@
+process.on('uncaughtException', (err) => { console.error('UNCAUGHT EXCEPTION:', err); process.exit(1); });
+process.on('unhandledRejection', (reason) => { console.error('UNHANDLED REJECTION:', reason); process.exit(1); });
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -10,11 +13,13 @@ const i18n = require("./middleware/i18n");
 const app = express();
 const port = process.env.PORT || 3000;
 
-console.log('MONGODB_URI prefix:', process.env.MONGODB_URI ? process.env.MONGODB_URI.substring(0, 20) + '...' : 'UNDEFINED');
-console.log('MONGODB_URI length:', process.env.MONGODB_URI ? process.env.MONGODB_URI.length : 0);
-
 if (!process.env.SESSION_SECRET) {
-  console.error('❌ SESSION_SECRET is not set in .env');
+  console.error('SESSION_SECRET is not set');
+  process.exit(1);
+}
+
+if (!process.env.MONGODB_URI) {
+  console.error('MONGODB_URI is not set');
   process.exit(1);
 }
 
@@ -138,11 +143,17 @@ app.get("/export/products", requireAuth, require("./controllers/exportController
 app.use((req, res) => { res.status(404).render("404"); });
 app.use((err, req, res, next) => { console.error(err); res.status(500).render("500"); });
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('✅ Connected to MongoDB successfully!');
-    const whatsapp = require("./services/whatsapp");
-    if (process.env.ADMIN_PHONE) whatsapp.init();
-    app.listen(port, () => { console.log(`🚀 Server running at: http://localhost:${port}/`); });
-  })
-  .catch((err) => { console.error('❌ MongoDB connection error:', err); });
+console.log('Connecting to MongoDB...');
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 10000,
+  connectTimeoutMS: 10000
+}).then(() => {
+  console.log('Connected to MongoDB successfully!');
+  const whatsapp = require("./services/whatsapp");
+  if (process.env.ADMIN_PHONE) whatsapp.init();
+  app.listen(port, () => { console.log('Server running at: http://localhost:' + port + '/'); });
+}).catch((err) => {
+  console.error('MongoDB connection error:', err.message);
+  console.error('Full error:', JSON.stringify(err, Object.getOwnPropertyNames(err)));
+  process.exit(1);
+});
