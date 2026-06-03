@@ -55,13 +55,12 @@ exports.updateOrderStatus = async (req, res, next) => {
 
 exports.toggleArchiveOrder = async (req, res, next) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const id = req.params.id;
+    const order = await Order.findById(id).lean();
     if (!order) return res.status(404).render("404");
-    order.archived = !order.archived;
-    await order.save();
-    req.session.success = order.archived ? "order_archived" : "order_unarchived";
-    activity.log(req, order.archived ? "archived_order" : "unarchived_order", "order", String(order._id), order.customerName || "").catch(() => {});
-    res.redirect("/admin/orders" + (order.archived ? "?archived=1" : ""));
+    await Order.updateOne({ _id: id }, { $set: { archived: !order.archived } });
+    req.session.success = order.archived ? "order_unarchived" : "order_archived";
+    res.redirect("/admin/orders" + (order.archived ? "" : "?archived=1"));
   } catch (err) { next(err); }
 };
 
