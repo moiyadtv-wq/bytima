@@ -55,7 +55,7 @@ exports.updateOrderStatus = async (req, res, next) => {
 
 exports.toggleArchiveOrder = async (req, res, next) => {
   try {
-    res.json({ ok: true, id: req.params.id });
+    res.json({ ok: true, id: req.params.id, ts: Date.now() });
   } catch (err) { next(err); }
 };
 
