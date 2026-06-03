@@ -35,24 +35,29 @@ const generalLimiter = rateLimit({
 const SKIP_CSRF = ["/login", "/admin-login", "/customer-register", "/guest-login", "/logout"];
 
 async function csrfProtect(req, res, next) {
-  if (!req.session) return next();
-  if (!req.session.csrfSecret) {
-    req.session.csrfSecret = await tokens.secret();
-  }
-  res.locals.csrfToken = tokens.create(req.session.csrfSecret);
-
-  if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method) && !SKIP_CSRF.includes(req.path)) {
-    const token = req.body?._csrf || req.headers["x-csrf-token"];
-    if (!tokens.verify(req.session.csrfSecret, token)) {
-      if (req.xhr || req.headers.accept?.includes("json")) {
-        return res.status(403).json({ error: "Invalid or missing CSRF token" });
-      }
-      req.session.error = "csrf_error";
-      const back = req.get("Referrer") || "/";
-      return res.redirect(back);
+  try {
+    if (!req.session) return next();
+    if (!req.session.csrfSecret) {
+      req.session.csrfSecret = await tokens.secret();
     }
+    res.locals.csrfToken = tokens.create(req.session.csrfSecret);
+
+    if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method) && !SKIP_CSRF.includes(req.path)) {
+      const token = req.body?._csrf || req.headers["x-csrf-token"];
+      if (!token || !tokens.verify(req.session.csrfSecret, token)) {
+        if (req.xhr || req.headers.accept?.includes("json")) {
+          return res.status(403).json({ error: "Invalid or missing CSRF token" });
+        }
+        req.session.error = "csrf_error";
+        const back = req.get("Referrer") || "/";
+        return res.redirect(back);
+      }
+    }
+    next();
+  } catch (err) {
+    console.error("CSRF error:", err);
+    next(err);
   }
-  next();
 }
 
 module.exports = { authLimiter, apiLimiter, checkoutLimiter, generalLimiter, csrfProtect };

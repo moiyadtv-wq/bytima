@@ -60,7 +60,7 @@ exports.toggleArchiveOrder = async (req, res, next) => {
     order.archived = !order.archived;
     await order.save();
     req.session.success = order.archived ? "order_archived" : "order_unarchived";
-    activity.log(req, order.archived ? "archived_order" : "unarchived_order", "order", order._id, order.customerName);
+    activity.log(req, order.archived ? "archived_order" : "unarchived_order", "order", String(order._id), order.customerName || "").catch(() => {});
     res.redirect("/admin/orders" + (order.archived ? "?archived=1" : ""));
   } catch (err) { next(err); }
 };
