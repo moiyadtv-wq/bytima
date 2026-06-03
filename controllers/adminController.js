@@ -55,7 +55,12 @@ exports.updateOrderStatus = async (req, res, next) => {
 
 exports.toggleArchiveOrder = async (req, res, next) => {
   try {
-    res.json({ ok: true, id: req.params.id, ts: Date.now() });
+    const id = req.params.id;
+    const order = await Order.findById(id).lean();
+    if (!order) return res.status(404).render("404");
+    await Order.updateOne({ _id: id }, { $set: { archived: !order.archived } });
+    req.session.success = order.archived ? "order_unarchived" : "order_archived";
+    res.redirect("/admin/orders" + (order.archived ? "" : "?archived=1"));
   } catch (err) { next(err); }
 };
 
