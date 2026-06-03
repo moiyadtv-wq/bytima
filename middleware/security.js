@@ -34,6 +34,13 @@ const generalLimiter = rateLimit({
 
 const SKIP_CSRF = ["/login", "/admin-login", "/customer-register", "/guest-login", "/logout"];
 
+function shouldSkipCSRF(path) {
+  if (SKIP_CSRF.includes(path)) return true;
+  if (path.startsWith("/products/add") || path.startsWith("/products/edit")) return true;
+  if (path === "/admin/profile" || path === "/shop/profile" || path === "/upload-profile-image") return true;
+  return false;
+}
+
 async function csrfProtect(req, res, next) {
   try {
     if (!req.session) return next();
@@ -42,7 +49,7 @@ async function csrfProtect(req, res, next) {
     }
     res.locals.csrfToken = tokens.create(req.session.csrfSecret);
 
-    if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method) && !SKIP_CSRF.includes(req.path)) {
+    if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method) && !shouldSkipCSRF(req.path)) {
       const token = req.body?._csrf || req.headers["x-csrf-token"];
       if (!token || !tokens.verify(req.session.csrfSecret, token)) {
         if (req.xhr || req.headers.accept?.includes("json")) {

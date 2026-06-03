@@ -2,7 +2,7 @@ const router = require("express").Router();
 const controller = require("../controllers/shopController");
 const upload = require("../middleware/upload");
 const { requireCustomer } = require("../middleware/auth");
-const { checkoutLimiter } = require("../middleware/security");
+const { checkoutLimiter, csrfProtect } = require("../middleware/security");
 const { checkoutRules, changePasswordRules, handleValidation } = require("../middleware/validation");
 
 // Product catalog
@@ -22,7 +22,7 @@ router.post("/cart/clear", requireCustomer, controller.clearCart);
 
 // Profile (customer only)
 router.get("/profile", requireCustomer, controller.getProfile);
-router.post("/profile", requireCustomer, upload.single("image"), controller.updateProfile);
+router.post("/profile", requireCustomer, upload.single("image"), csrfProtect, controller.updateProfile);
 
 // Checkout / Orders (customer only)
 router.get("/buy-now/:id", requireCustomer, controller.buyNow);

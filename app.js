@@ -139,13 +139,13 @@ app.get("/admin/customers/:id/edit", requireAuth, requireAdmin, require("./contr
 app.post("/admin/customers/:id/edit", requireAuth, requireAdmin, require("./controllers/adminController").updateCustomer);
 app.post("/admin/customers/:id/toggle-status", requireAuth, requireAdmin, require("./controllers/adminController").toggleCustomerStatus);
 app.post("/admin/customers/:id/delete", requireAuth, requireAdmin, require("./controllers/adminController").deleteCustomer);
-app.post("/upload-profile-image", requireAuth, upload.single("image"), require("./controllers/adminController").uploadProfileImage);
+app.post("/upload-profile-image", requireAuth, upload.single("image"), csrfProtect, require("./controllers/adminController").uploadProfileImage);
 app.get("/admin/add-employee", requireAuth, requireAdmin, require("./controllers/adminController").getAddEmployee);
 app.post("/admin/add-employee", requireAuth, requireAdmin, require("./controllers/adminController").createEmployee);
 app.get("/admin/change-password", requireAuth, require("./controllers/adminController").getChangePassword);
 app.post("/admin/change-password", requireAuth, changePasswordRules, handleValidation, require("./controllers/adminController").changePassword);
 app.get("/admin/profile", requireAuth, require("./controllers/adminController").getProfile);
-app.post("/admin/profile", requireAuth, upload.single("image"), require("./controllers/adminController").updateProfile);
+app.post("/admin/profile", requireAuth, upload.single("image"), csrfProtect, require("./controllers/adminController").updateProfile);
 app.get("/admin/users", requireAuth, requireAdmin, require("./controllers/adminController").getUsers);
 app.post("/admin/users/:id/toggle-role", requireAuth, requireAdmin, require("./controllers/adminController").toggleRole);
 app.post("/admin/users/:id/delete", requireAuth, requireAdmin, require("./controllers/adminController").deleteUser);
