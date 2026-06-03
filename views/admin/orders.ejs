@@ -133,12 +133,12 @@
                         <i class="bi bi-whatsapp"></i>
                       </button>
                     </div>
-                    <form action="/admin/orders/<%= order._id %>/archive" method="POST" class="mt-1">
-                      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                      <button type="submit" class="btn btn-sm btn-<%= order.archived ? 'warning' : 'secondary' %> w-100">
-                        <i class="bi bi-<%= order.archived ? 'archive-fill' : 'archive' %>"></i> <%= order.archived ? __('unarchive') : __('archive') %>
-                      </button>
-                    </form>
+                  </form>
+                  <form action="/admin/orders/<%= order._id %>/archive" method="POST" class="mt-1">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                    <button type="submit" class="btn btn-sm btn-<%= order.archived ? 'warning' : 'secondary' %> w-100">
+                      <i class="bi bi-<%= order.archived ? 'archive-fill' : 'archive' %>"></i> <%= order.archived ? __('unarchive') : __('archive') %>
+                    </button>
                   </form>
                 </div>
               </div>
