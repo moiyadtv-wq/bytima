@@ -84,6 +84,7 @@ document.addEventListener('change', function(e) {
     const form = new FormData();
     form.append('image', file);
     form.append('type', e.target.dataset.type);
+    form.append('_csrf', '<%= csrfToken %>');
     fetch('/upload-profile-image', { method: 'POST', body: form })
       .then(r => r.json())
       .then(data => {

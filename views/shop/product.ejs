@@ -111,7 +111,7 @@
   document.querySelectorAll('.add-to-cart').forEach(btn => {
     btn.addEventListener('click', async function() {
       const id = this.dataset.id;
-      const res = await fetch('/shop/cart/add/' + id, { method: 'POST' });
+      const res = await fetch('/shop/cart/add/' + id, { method: 'POST', headers: { 'X-CSRF-Token': '<%= csrfToken %>' } });
       const data = await res.json();
       if (data.success) showToast('<%= __('added_to_cart') %>', 'success');
     });

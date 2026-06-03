@@ -92,7 +92,7 @@
 <script nonce="<%= nonce %>">
   async function deleteUser(id) {
     if (!confirm('<%= __('confirm_delete') %>')) return;
-    const res = await fetch('/customers/delete/' + id, { method: 'POST' });
+    const res = await fetch('/admin/customers/' + id + '/delete', { method: 'POST', headers: { 'X-CSRF-Token': '<%= csrfToken %>' } });
     if (res.ok) location.href = '/';
     else alert('<%= __('error_occurred') %>');
   }

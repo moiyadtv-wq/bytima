@@ -86,7 +86,7 @@
       inp.value = val;
       await fetch('/shop/cart/update', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<%= csrfToken %>' },
         body: JSON.stringify({ productId: this.dataset.id, quantity: val })
       });
       location.reload();
@@ -99,7 +99,7 @@
       inp.value = val;
       await fetch('/shop/cart/update', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<%= csrfToken %>' },
         body: JSON.stringify({ productId: this.dataset.id, quantity: val })
       });
       location.reload();
@@ -110,7 +110,7 @@
       const val = parseInt(this.value) || 1;
       await fetch('/shop/cart/update', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<%= csrfToken %>' },
         body: JSON.stringify({ productId: this.dataset.id, quantity: Math.max(1, val) })
       });
       location.reload();

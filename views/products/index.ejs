@@ -73,7 +73,7 @@
 <script nonce="<%= nonce %>">
   async function deleteProduct(id) {
     showConfirm('<%= __('confirm_delete') %>', async function() {
-      const res = await fetch('/products/delete/' + id, { method: 'POST' });
+      const res = await fetch('/products/delete/' + id, { method: 'POST', headers: { 'X-CSRF-Token': '<%= csrfToken %>' } });
       if (res.ok) location.reload();
       else showToast('<%= __('error_occurred') %>', 'error');
     });
