@@ -161,7 +161,7 @@ app.get("/export/people", requireAuth, require("./controllers/exportController")
 app.get("/export/products", requireAuth, require("./controllers/exportController").productsCSV);
 
 app.use((req, res) => { res.status(404).render("404"); });
-app.use((err, req, res, next) => { console.error(err); res.status(500).render("500"); });
+app.use((err, req, res, next) => { console.error("ERROR:", err?.message, err?.stack); res.status(500).render("500"); });
 
 console.log('Connecting to MongoDB...');
 mongoose.connect(process.env.MONGODB_URI, {

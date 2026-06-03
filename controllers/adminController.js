@@ -54,14 +54,21 @@ exports.updateOrderStatus = async (req, res, next) => {
 };
 
 exports.toggleArchiveOrder = async (req, res, next) => {
+  console.log("toggleArchiveOrder called");
+  console.log("params:", JSON.stringify(req.params));
+  console.log("body keys:", Object.keys(req.body || {}));
   try {
     const id = req.params.id;
+    if (!id) throw new Error("No id param");
     const order = await Order.findById(id).lean();
-    if (!order) return res.status(404).render("404");
+    if (!order) throw new Error("Order not found");
     await Order.updateOne({ _id: id }, { $set: { archived: !order.archived } });
     req.session.success = order.archived ? "order_unarchived" : "order_archived";
     res.redirect("/admin/orders" + (order.archived ? "" : "?archived=1"));
-  } catch (err) { next(err); }
+  } catch (err) {
+    console.error("toggleArchiveOrder error:", err.message);
+    next(err);
+  }
 };
 
 exports.getUsers = async (req, res, next) => {
